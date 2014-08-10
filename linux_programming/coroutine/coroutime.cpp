@@ -15,33 +15,27 @@ void *stackBackup = NULL;
 
 struct RoutineInfo{
 	jmp_buf buf;
+
 	void * param;
 	RoutineHandler handler;
 	void * ret;
-	pthread_mutex_t mutex;
-	pthread_t thread;
 	bool stopped;
-	bool started;
 
 	void *stackbase;
 	size_t stacksize;
-
 	pthread_attr_t attr;
 	
 	RoutineInfo(size_t size){
+
 		param = NULL;
 		handler = NULL;
 		ret = NULL;
 		stopped = false;
-		started = false;
-
-		pthread_mutex_t init = PTHREAD_MUTEX_INITIALIZER;
-		memcpy(&(mutex),&init,sizeof(init));
-		
-		thread = pthread_t();
 
 		stackbase = malloc(size);
-		stacksize = size;
+		stacksize = 0;
+		if(stackbase!=NULL)
+			stacksize = size;
 
 		pthread_attr_init(&attr);
 		if(stacksize)
@@ -58,47 +52,33 @@ struct RoutineInfo{
 
 std::list<RoutineInfo*> InitRoutines(){
 	std::list<RoutineInfo*> list;
-
 	RoutineInfo *main = new RoutineInfo(0);
-
 	list.push_back(main);
-
 	return list;
 }
+
 std::list<RoutineInfo*> routines = InitRoutines();
 
 int Switch(){
 	RoutineInfo* current = routines.front();
+	routines.pop_front();
 	if(current->stopped){
-		cout<<"stop true, jmp directly"<<endl;
-		longjmp( (*++routines.begin())->buf ,1);
+		longjmp( (*routines.begin())->buf ,1);
 	}
-	if(routines.size()==1) return 0;
-	cout<<"setjmp"<<endl;
+	routines.push_back(current);		// adjust the routines to the end of list
+	if(routines.size()==1) return 0;	// no other thread
 	if( !setjmp(current->buf) ){
-		longjmp( (*++routines.begin())->buf ,1);
-	}else{
-		cout<<"restore"<<endl;
-		RoutineInfo* last = routines.front();
-		routines.pop_front();
-		if(last->stopped){
-
-		}else{
-			routines.push_back(last);
-			cout<<"scroll"<<endl;
-		}
-		cout<<"getfront"<<endl;
-		RoutineInfo* thisRoutine = routines.front();
+		longjmp( (*routines.begin())->buf ,1);
 	}
 }
 
 void *coroutine(void *pRoutineInfo){
 
 	RoutineInfo& info = *(RoutineInfo*)pRoutineInfo;
+
 	if( !setjmp(info.buf)){
 		
-		cout<<"thread exit!"<<&pRoutineInfo<<endl;
-
+		// back up the stack, and then exit
 		stackBackup = realloc(stackBackup,info.stacksize);
 		memcpy(stackBackup,info.stackbase, info.stacksize);
 
@@ -107,23 +87,10 @@ void *coroutine(void *pRoutineInfo){
 		return (void*)0;
 	}
 
-
-	// adjust the list
-	RoutineInfo* last = routines.front();
-	routines.pop_front();
-	if(last->stopped){
-		// unlock mutex, but do not delete last here
-		pthread_mutex_unlock( &(last->mutex));
-	}else{
-		routines.push_back(last);
-	}
-	RoutineInfo* thisRoutine = routines.front();
-
 	info.ret = info.handler(info.param);
 	
 	// never return
 	info.stopped = true;
-	cout<<"stop true"<<endl;
 	Switch();
 	
 	return (void*)0; // suppress compiler warning
@@ -131,33 +98,41 @@ void *coroutine(void *pRoutineInfo){
 
 int CreateCoRoutine(RoutineHandler handler,void* param ){
 	RoutineInfo* info = new RoutineInfo(PTHREAD_STACK_MIN+ 0x4000);
+	if(info->stackbase==NULL){
+		delete info;
+		return __LINE__;
+	}
 
 	info->param = param;
 	info->handler = handler;
 
-	pthread_mutex_lock( &(info->mutex));
-
-	RoutineInfo* currentRoutine = *routines.begin();
-
-	int ret = pthread_create( &(info->thread), &(info->attr), coroutine, info);
-	
-	// if thread create failed, unlock mutex, delete the element from the list
-
-	routines.push_back(info);
+	pthread_t thread;
+	int ret = pthread_create( &thread, &(info->attr), coroutine, info);
+	if(ret){
+		delete info;
+		return __LINE__;
+	}
 
 	void* status;
-	pthread_join(info->thread,&status);
+	pthread_join(thread,&status);
 
+	if(stackBackup == NULL){
+		delete info;
+		return __LINE__;
+	}
+	
 	// restore
 	memcpy(info->stackbase,stackBackup,info->stacksize);
 
-	cout<<"gooo!!!"<<endl;
+	// add the routine to the end of the list
+	routines.push_back(info);
+	
+	return 0;
 }
 
 #include <sys/wait.h>
 
 void* foo(void*){
-	cout<<"in Foo"<<endl;
 	for(int i=0; i<5; ++i){
 		cout<<"foo: "<<i<<endl;
 		sleep(1);
@@ -170,7 +145,6 @@ int main(){
 	for(int i=0; i<10; ++i){
 		cout<<"main: "<<i<<endl;
 		sleep(1);
-		cout<<"main begin to switch."<<endl;
 		Switch();
 	}
 }
