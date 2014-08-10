@@ -4,9 +4,9 @@
 
 ## Introduction ##
 
-Days ago I was exposed to the concept of coroutine. It is very interesting bacause I can use only one thread to implement an efficient multi-thread like program. Using a coroutine architecture, you don't need to worry about any automic problems and those memory barriers issues, because you have only one thread, and the routine switch context by its own.
+Days ago I was exposed to the concept of coroutine. It is very interesting bacause I can use only one thread to implement an efficient multi-thread like program. Using a coroutine architecture rather than multi-threading, you don't need to worry about any automic problems and those memory barriers issues, because you have only one thread, and the routine switch context by its own.
 
-I've encountered some coroutine implementations. Without the native support in C/C++, most of them use ASM code to create and switch between context, the others use the standard C's [`setjmp` and `longjmp`](http://en.wikipedia.org/wiki/Setjmp.h) but require the routine to use static local variable to store its local data. However, I hate both writing ASM code and using static local variables so much that I come up with a slightly more elegant implementation, **without any ASM code and static local variables or macros**. This article is devoted to presenting you the basic idea and its implementation.
+I've encountered some coroutine implementations. Without the native support in C/C++, most of them use ASM code to create and switch between context, some others use the standard C's [`setjmp` and `longjmp`](http://en.wikipedia.org/wiki/Setjmp.h) but require the routine to use static local variable to store its local data. However, I hate both writing ASM code and using static local variables so much that I come up with a slightly more elegant implementation, **without any ASM code and static local variables or macros**. This article is devoted to presenting you the basic idea and its implementation.
 
 
 
