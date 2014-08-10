@@ -28,25 +28,16 @@ struct RoutineInfo{
 		stopped = false;
 
 		stackbase = malloc(size);
-		stacksize = 0;
-		if(stackbase!=NULL)
-			stacksize = size;
+		stacksize = size;
 
 		pthread_attr_init(&attr);
-		if(stacksize){
-			if( 0 != pthread_attr_setstack(&attr,stackbase,stacksize) ){
-				free(stackbase);
-				stackbase = NULL;
-				stacksize = 0;
-			}
-		}
+		if(stacksize)
+			pthread_attr_setstack(&attr,stackbase,stacksize);
 	}
 	
 	~RoutineInfo(){
 		pthread_attr_destroy(&attr);
 		free(stackbase);
-		stackbase = NULL;
-		stacksize = 0;
 	}
 };
 
@@ -64,28 +55,15 @@ void *CoroutineStart(void *pRoutineInfo);
 
 int CreateCoroutine(RoutineHandler handler,void* param ){
 	RoutineInfo* info = new RoutineInfo(PTHREAD_STACK_MIN+ 0x4000);
-	if(info->stackbase==NULL){
-		delete info;
-		return __LINE__;
-	}
 
 	info->param = param;
 	info->handler = handler;
 
 	pthread_t thread;
 	int ret = pthread_create( &thread, &(info->attr), CoroutineStart, info);
-	if(ret){
-		delete info;
-		return __LINE__;
-	}
 
 	void* status;
 	pthread_join(thread,&status);
-
-	if(stackBackup == NULL){ // if we failed to backup the stack
-		delete info;
-		return __LINE__;
-	}
 
 	memcpy(info->stackbase,stackBackup,info->stacksize); 	// restore the stack
 
@@ -103,8 +81,7 @@ void *CoroutineStart(void *pRoutineInfo){
 	if( !setjmp(info.buf)){	
 		// back up the stack, and then exit
 		stackBackup = realloc(stackBackup,info.stacksize);
-		if(stackBackup)
-			memcpy(stackBackup,info.stackbase, info.stacksize);
+		memcpy(stackBackup,info.stackbase, info.stacksize);
 
 		pthread_exit(NULL);
 
@@ -133,8 +110,6 @@ void Switch(){
 	}
 	
 	routines.push_back(current);		// adjust the routines to the end of list
-	
-	if(routines.size()==1) return;	// no other thread
 	
 	if( !setjmp(current->buf) ){
 		longjmp( (*routines.begin())->buf ,1);
