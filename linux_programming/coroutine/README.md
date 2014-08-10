@@ -1,24 +1,26 @@
-# A C/C++'s Implementatio of Coroutine
+# A C/C++'s Implementation of Coroutine
 
 
 
 ## Introduction ##
 
-Days ago I was exposed to the concept of coroutine. It is very interesting bacause I could use only one thread to implement an efficient multi-thread like program. Using a coroutine architecture, You don't need to worry about any automic issues because the routine switch context by its own.
+Days ago I was exposed to the concept of coroutine. It is very interesting bacause I can use only one thread to implement an efficient multi-thread like program. Using a coroutine architecture, you don't need to worry about any automic problems and those memory barriers issues, because you have only one thread, and the routine switch context by its own.
 
-I've encountered some coroutine implementations. Without the native support of coroutine in C/C++, most of them use asm code to create and switch between context, the others use the standard C's [`setjmp` and `longjmp`](http://en.wikipedia.org/wiki/Setjmp.h) but require the routine to use static local variable to store its local date before a context switch. However, I hate both writing asm code and using static local variables. This article will presents you a way of implementing a simple coroutine core in C++ **without any asm code**.
+I've encountered some coroutine implementations. Without the native support in C/C++, most of them use ASM code to create and switch between context, the others use the standard C's [`setjmp` and `longjmp`](http://en.wikipedia.org/wiki/Setjmp.h) but require the routine to use static local variable to store its local data. However, I hate both writing ASM code and using static local variables so much that I come up with a slightly more elegant implementation, **without any ASM code and static local variables or macros**. This article is devoted to presenting you the basic idea and its implementation.
 
 
 
 ## The Basic Idea ##
 
-The main difficulties for C/C++ are creating, storing and restoring the execution context, which envolve management of routine's stack, access of the CPU's registers for storing and restoring executing context. However, both the routine's stack and CPU's registers are not defined in standared C/C++. Therefore, it's impossible for us to present a pure cross-platform implementation in C/C++. But it's still possible to avoid asm code with the operating system's API, the remaining of this article will shows you how to use posix's [pthread](https://computing.llnl.gov/tutorials/pthreads/) to implement a simple coroutine framework.
+The main difficulties for C/C++ are creating, storing and restoring the execution context, which envolve management of routine's stack, access of the CPU's registers for storing and restoring executing context. However, both the routine's stack and CPU's registers are not defined in standared C/C++. Therefore, it's impossible for us to present a pure cross-platform implementation in C/C++. But it's still possible to avoid ASM code with the operating system's API, the remaining of this article will shows you how to use POSIX's [pthread](https://computing.llnl.gov/tutorials/pthreads/) to implement a simple coroutine framework.
 
-For creating the routine's execution context, we could use the operating system's API to create a real thread so that the operating system creates an execution context (initializes CPU's registers and the program's stack frame) for us. When the thread starts, it uses the C's `setjmp` function to store its execution context (it means registers here) into an external buffer and then the thread exits without the program context (it means stack here) being destroyed. When creating the thread, use [`pthread_attr_setstack`](https://computing.llnl.gov/tutorials/pthreads/man/pthread_attr_setstack.txt) to explicitly specify the stack so that it won't be automatically destroyed when the thread exits. Apperantly, the `longjmp` function could be used to restoring execution's context in this case.
+For creating the routine's execution context, we could call [`pthread_create`](https://computing.llnl.gov/tutorials/pthreads/man/pthread_create.txt) to create a real thread so that the operating system creates an execution context (initializes CPU's registers and the program's stack frame) for us. When the thread starts, it uses the C's `setjmp` function to store its execution context (it means registers here) into an external buffer. When creating the thread, use [`pthread_attr_setstack`](https://computing.llnl.gov/tutorials/pthreads/man/pthread_attr_setstack.txt) to explicitly specify the stack so that it won't be automatically destroyed by the system when the thread exits. Apperantly, in this case, the `longjmp` function could be used to restoring execution's context. 
 
-## creating the context ##
 
-Here's the definition of our routines info. To make this article shorter, all error handling code are deleted. The source code of the original version is in the `coroutine.cpp` file, the demostration version is `coroutime_demonstration.cpp`.
+
+## Creating the Context ##
+
+Here's the definition of our routines info. To make this article shorter, all error handling code are deleted to become the demonstration version. The source code of the original version is in the `coroutine.cpp`, the demostration version is `coroutime_demonstration.cpp`.
 
 ``` cplusplus
 typedef void * (*RoutineHandler)(void*);
@@ -123,6 +125,9 @@ void *CoroutineStart(void *pRoutineInfo){
 	return (void*)0; // suppress compiler warning
 }
 ```
+
+
+
 ## Switching between Contexts ##
 
 A routine calls the `Switch()` function to swtich to another routine by itself.
@@ -154,7 +159,9 @@ void Switch(){
 }
 ```
 
-## demonstration ##
+
+
+## Demonstration ##
 
 The user code is pretty simple, its almost like using a threading library. In coroutines, the routine calls the `Switch()` function to give CPU time to another routine by itself.
 
