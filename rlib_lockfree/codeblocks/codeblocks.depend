@@ -2,16 +2,11 @@
 1385316878 source:z:\git\cpp_learn\rlib_lockfree\codeblocks\main.cpp
 	<iostream>
 
-1409419829 source:z:\git\cpp_learn\rlib_lockfree\test\main.cpp
-	<thread>
-	<mutex>
-	<string>
-	<iostream>
-	<chrono>
-	"rlib/lockfree/CycleBufferSwsr.h"
-	"rlib/lockfree/_LightWeightMutex.h"
+1409421032 source:z:\git\cpp_learn\rlib_lockfree\test\main.cpp
 
 1409419872 z:\git\cpp_learn\rlib_lockfree\inc\rlib\lockfree\cyclebufferswsr.h
 
 1409419382 z:\git\cpp_learn\rlib_lockfree\inc\rlib\lockfree\_lightweightmutex.h
+
+1409421250 source:z:\git\cpp_learn\rlib_lockfree\test\cyclebufferswsr.cpp
 

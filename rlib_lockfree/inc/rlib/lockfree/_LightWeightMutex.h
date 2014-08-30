@@ -34,10 +34,21 @@ public:
 		}
 	}
 
+	template<std::memory_order memoryOrder = std::memory_order_seq_cst>
+	void lock(){
+        this->template Lock<memoryOrder>();
+	}
+
     template<std::memory_order memoryOrder = std::memory_order_seq_cst>
 	void UnLock(){
 		locked.store(false, memoryOrder);
 	}
+
+	template<std::memory_order memoryOrder = std::memory_order_seq_cst>
+	void unlock(){
+		this->template UnLock<memoryOrder>();
+	}
+
 };
 
 template<std::memory_order memoryOrder = std::memory_order_seq_cst>
