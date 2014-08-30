@@ -1,0 +1,17 @@
+# depslib dependency file v1.0
+1385316878 source:z:\git\cpp_learn\rlib_lockfree\codeblocks\main.cpp
+	<iostream>
+
+1409419829 source:z:\git\cpp_learn\rlib_lockfree\test\main.cpp
+	<thread>
+	<mutex>
+	<string>
+	<iostream>
+	<chrono>
+	"rlib/lockfree/CycleBufferSwsr.h"
+	"rlib/lockfree/_LightWeightMutex.h"
+
+1409419872 z:\git\cpp_learn\rlib_lockfree\inc\rlib\lockfree\cyclebufferswsr.h
+
+1409419382 z:\git\cpp_learn\rlib_lockfree\inc\rlib\lockfree\_lightweightmutex.h
+
