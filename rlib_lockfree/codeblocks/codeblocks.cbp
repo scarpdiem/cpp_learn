@@ -37,10 +37,10 @@
 		<Unit filename="../inc/rlib/lockfree/CycleBufferMwsr.h" />
 		<Unit filename="../inc/rlib/lockfree/CycleBufferSwsr.h" />
 		<Unit filename="../inc/rlib/lockfree/_LightWeightMutex.h" />
-		<Unit filename="../test/CycleBufferSwsr.cpp">
+		<Unit filename="../test/CycleBufferSwsr.cpp" />
+		<Unit filename="../test/LightWeightMutexTest.cpp">
 			<Option link="0" />
 		</Unit>
-		<Unit filename="../test/LightWeightMutexTest.cpp" />
 		<Unit filename="../test/PreSizedExtensibleBufferTest.cpp">
 			<Option compile="0" />
 			<Option link="0" />
