@@ -57,9 +57,18 @@ public:
 
 #include <mysql/mysql.h>
 
+void ShowUsage(const std::map<std::string,std::string>& i_args){
+	std::cerr<<"usage: this_bin ";
+	for(std::map<std::string,std::string>::const_iterator it=i_args.begin(); it!=i_args.end(); ++it){
+		std::cerr<< it->first <<"=["<< it->first<<"] ";
+	}
+	std::cerr<<std::endl;
+}
+
 int ProcessArgs(int i_argc, char ** i_argv, std::map<std::string,std::string>& io_args, std::string& o_errorMessage){
 	if(i_argc<=1){
 		o_errorMessage = "no arguments";
+		ShowUsage(io_args);
 		return __LINE__;
 	}
 	
