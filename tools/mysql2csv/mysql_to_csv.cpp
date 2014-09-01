@@ -142,7 +142,7 @@ int main(int argc,char**argv){
 		std::cerr<<"ERROR "<<": "<<"invalid parameter port, should be an integer."<<std::endl;
 		return __LINE__;
 	}
-	const char * pDbCstr = NULL;
+	const char * pDbCstr = "";
 	if(args["db"] != ""){
 		pDbCstr = args["db"].c_str();
 	}
@@ -167,7 +167,11 @@ int main(int argc,char**argv){
 		return __LINE__;
 	}
 
-	mysql_query(&mysql, sql.c_str());
+	int queryErr = mysql_query(&mysql, sql.c_str());
+	if(queryErr){
+		std::cerr<<"ERROR "<<queryErr<<": query failed."<<std::endl;
+		return __LINE__;
+	}
 
 	std::vector<std::string> header;
 
