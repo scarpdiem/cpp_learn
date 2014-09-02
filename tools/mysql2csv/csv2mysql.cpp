@@ -1,5 +1,5 @@
 /**
- * Excute a MySQL query and store the result in csv format.
+ * Excute a MySQL query with each row read from the csv file except the header row.
  * The csv format used here comforms to [rfc4180](http://tools.ietf.org/html/rfc4180).
  * @author roxma
  */
