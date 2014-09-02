@@ -154,10 +154,6 @@ int main(int argc,char**argv){
 		std::cerr<<"ERROR "<<": "<<"invalid parameter port, should be an integer."<<std::endl;
 		return __LINE__;
 	}
-	const char * pDbCstr = "";
-	if(args["db"] != ""){
-		pDbCstr = args["db"].c_str();
-	}
 
 	// connection
 	int charsetErr = mysql_options(&mysql,MYSQL_SET_CHARSET_NAME,args["charset"].c_str());
@@ -165,7 +161,7 @@ int main(int argc,char**argv){
 		std::cerr<<"ERROR : cannot set connection charset"<<std::endl;
 		return __LINE__;
 	}
-	MYSQL* connectSuccess = mysql_real_connect(&mysql,args["host"].c_str(),args["user"].c_str(),args["passwd"].c_str(),pDbCstr,port,NULL,0);
+	MYSQL* connectSuccess = mysql_real_connect(&mysql,args["host"].c_str(),args["user"].c_str(),args["passwd"].c_str(),args["db"].c_str(),port,NULL,0);
 	if(connectSuccess==NULL){
 		std::cerr<<"ERROR : cannot connect to mysql."<<std::endl;
 		return __LINE__;
