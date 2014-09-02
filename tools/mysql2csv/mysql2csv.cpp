@@ -1,3 +1,9 @@
+/**
+ * Excute a MySQL query and store the result in csv format.
+ * The csv format used here comforms to [rfc4180](http://tools.ietf.org/html/rfc4180).
+ * @author roxma
+ */
+
 #include <iostream>
 #include <vector>
 #include <string>
