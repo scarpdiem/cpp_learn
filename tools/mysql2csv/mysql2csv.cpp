@@ -22,7 +22,13 @@ class CsvWriter{
 	}
 
 	std::string MakeCell(const std::string& i_value){
-		return "\"" + ReplaceString(i_value,"\"","\"\"" ) + "\"";
+		if(i_value.find_first_of(",\"\r\n") != std::string::npos){ 
+			// Fields containing line breaks (CRLF), double quotes, 
+			// and commas should be enclosed in double-quotes.
+			return "\"" + ReplaceString(i_value,"\"","\"\"" ) + "\"";
+		} else{
+			return i_value;
+		}
 	}
 
 public:
@@ -151,7 +157,6 @@ int main(int argc,char**argv){
 	int charsetErr = mysql_options(&mysql,MYSQL_SET_CHARSET_NAME,args["charset"].c_str());
 	if(charsetErr){
 		std::cerr<<"ERROR : cannot set connection charset"<<std::endl;
-		mysql_close(&mysql);
 		return __LINE__;
 	}
 	MYSQL* connectSuccess = mysql_real_connect(&mysql,args["host"].c_str(),args["user"].c_str(),args["passwd"].c_str(),pDbCstr,port,NULL,0);
@@ -170,6 +175,7 @@ int main(int argc,char**argv){
 	int queryErr = mysql_query(&mysql, sql.c_str());
 	if(queryErr){
 		std::cerr<<"ERROR "<<queryErr<<": query failed."<<std::endl;
+		mysql_close(&mysql);
 		return __LINE__;
 	}
 
@@ -199,6 +205,7 @@ int main(int argc,char**argv){
 	}
 	
 	file.close();
+	mysql_close(&mysql);
 	return 0;
 }
 

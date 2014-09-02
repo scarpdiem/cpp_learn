@@ -1,2 +1,2 @@
 all:
-	g++ mysql_to_csv.cpp  -g -L/usr/lib64/mysql  -lmysqlclient
+	g++ mysql2csv.cpp -omysql2csv -g -L/usr/lib64/mysql  -lmysqlclient
