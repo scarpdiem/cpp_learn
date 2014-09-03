@@ -163,21 +163,25 @@ int main(int argc,char**argv){
 	}
 	MYSQL* connectSuccess = mysql_real_connect(&mysql,args["host"].c_str(),args["user"].c_str(),args["passwd"].c_str(),args["db"].c_str(),port,NULL,0);
 	if(connectSuccess==NULL){
-		std::cerr<<"ERROR : cannot connect to mysql."<<std::endl;
+		std::cerr<<"ERROR : cannot connect to mysql: "<<mysql_error(&mysql)<<std::endl;
 		return __LINE__;
 	}
+	struct MySqlCloser{
+		MYSQL *p;
+		MySqlCloser(MYSQL* or_p):p(or_p){}
+		~MySqlCloser(){mysql_close(p);}
+	}mysqlCloser(&mysql);
+	(void)mysqlCloser; // suppress warning
 
 	std::string sql = args["execute"];
 	if( sql == ""){
 		std::cerr<<"ERROR "<<": "<<"The statement to be execute cannot be empty, please set the execute parameter"<<std::endl;
-		mysql_close(&mysql);
 		return __LINE__;
 	}
 
 	int queryErr = mysql_query(&mysql, sql.c_str());
 	if(queryErr){
-		std::cerr<<"ERROR "<<queryErr<<": query failed."<<std::endl;
-		mysql_close(&mysql);
+		std::cerr<<"ERROR "<<queryErr<<": query failed: "<<mysql_error(&mysql)<<std::endl;
 		return __LINE__;
 	}
 
@@ -207,7 +211,6 @@ int main(int argc,char**argv){
 	}
 	
 	file.close();
-	mysql_close(&mysql);
 	return 0;
 }
 

@@ -238,7 +238,7 @@ int main(int argc,char**argv){
 	if(args["input"] != ""){
 		file.open(args["input"].c_str(),std::ifstream::binary);
 		if(!file){
-			std::cout<<"ERROR: cannot open file ["<<args["input"]<<"]";
+			std::cerr<<"ERROR: cannot open file ["<<args["input"]<<"]";
 			return __LINE__;
 		}
 		pStream = &file;
@@ -267,12 +267,12 @@ int main(int argc,char**argv){
 	// connection
 	int charsetErr = mysql_options(&mysql,MYSQL_SET_CHARSET_NAME,args["charset"].c_str());
 	if(charsetErr){
-		std::cerr<<"ERROR : cannot set connection charset"<<std::endl;
+		std::cerr<<"ERROR : cannot set connection charset"<<mysql_error(&mysql)<<std::endl;
 		return __LINE__;
 	}
 	MYSQL* connectSuccess = mysql_real_connect(&mysql,args["host"].c_str(),args["user"].c_str(),args["passwd"].c_str(),args["db"].c_str(),intArgs["port"],NULL,0);
 	if(connectSuccess==NULL){
-		std::cerr<<"ERROR : cannot connect to mysql."<<std::endl;
+		std::cerr<<"ERROR : cannot connect to mysql: "<<mysql_error(&mysql)<<std::endl;
 		return __LINE__;
 	}
 	struct MySqlCloser{
@@ -339,7 +339,10 @@ int main(int argc,char**argv){
 			}
 			fieldName += fieldNameCh;
 		}
-
+		if( headerIndexMap.count(fieldName)==0 ){
+			std::cerr<<"Invalid field Name ["<<fieldName<<"]"<<std::endl;
+			return __LINE__;
+		}
 		fieldList.push_back(fieldName);
 	}
 	params.resize(fieldList.size());
@@ -357,7 +360,7 @@ int main(int argc,char**argv){
 
 	//start transaction
 	if (mysql_query (&mysql,"begin")!=0){
-		std::cerr<<"begin trasaction error."<<std::endl;
+		std::cerr<<"begin trasaction error."<<mysql_error(&mysql)<<std::endl;
 		return __LINE__;
 	}
 
@@ -374,7 +377,7 @@ int main(int argc,char**argv){
 	(void)stmtCloser; // suppress warning
 	
 	if( mysql_stmt_prepare (stmt, statement.c_str(),statement.length()) != 0){
-		std::cerr<<"ERROR: Could not prepare statement, "<<mysql_stmt_error (stmt)<<std::endl;
+		std::cerr<<"ERROR: Could not prepare statement, "<<mysql_stmt_error(stmt)<<", "<<mysql_error(&mysql)<<std::endl;
 		return __LINE__;
 	}
 	
@@ -392,11 +395,11 @@ int main(int argc,char**argv){
 			params[i].is_null = 0;
 		}
 		if (mysql_stmt_bind_param (stmt, &(params[0])) != 0){
-			std::cerr<<"ERROR: could not bind."<<std::endl;
+			std::cerr<<"ERROR: could not bind. "<<mysql_stmt_error(stmt)<<", "<<mysql_error(&mysql)<<std::endl;
 			return __LINE__;
 		}
 		if (mysql_stmt_execute (stmt) != 0){
-			std::cerr<<"ERROR: execute error."<<std::endl;
+			std::cerr<<"ERROR: execute error. "<<mysql_stmt_error(stmt)<<", "<<mysql_error(&mysql)<<std::endl;
 			return __LINE__;
 		}
 	}
