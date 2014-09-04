@@ -138,6 +138,15 @@ public:
  	 */
 	CsvReader(std::istream* ir_stream):pIstream(ir_stream){}
 
+	int Reset(){
+		this->pIstream->clear();
+		this->pIstream->seekg(0);
+		if(this->pIstream->fail()){
+			return __LINE__;
+		}
+		return 0;
+	}
+
 };
 
 #include <string.h>
@@ -150,6 +159,8 @@ public:
 
 
 #include <mysql/mysql.h>
+
+int GetWarningMessages(MYSQL& mysql, std::vector<std::string>& warningMessages);
 
 void ShowUsage(const std::map<std::string,std::string>& i_args){
 	std::cerr<<"usage: this_bin ";
@@ -215,9 +226,12 @@ int main(int argc,char**argv){
 
 	args["db"] = "";
 	args["execute"] = "";
-	intArgs["begin_row_index"] = 1;
-	//intArgs["transaction"] = 1;
-	//intArgs["ignore_error"] = 0;
+	// If there's a warning after a query statement, the program threats it as
+	// error and terminated. This option is enabled by default.
+	intArgs["warning_as_error"] = 1; 
+	// intArgs["begin_row_index"] = 1;
+	// intArgs["transaction"] = 1;
+	// intArgs["ignore_error"] = 0;
 	
 	args["null_cell_value"] = "NULL";
 	
@@ -232,7 +246,7 @@ int main(int argc,char**argv){
 	}
 
 	
-	// open output stream
+	// open input stream
 	std::istream* pStream = NULL;
 	std::ifstream file;
 	if(args["input"] != ""){
@@ -247,6 +261,46 @@ int main(int argc,char**argv){
 	}
 
 	CsvReader reader(pStream);
+
+	// read header
+	std::vector<std::string> header;
+	std::map<std::string,size_t> headerIndexMap;
+	int readHeaderErr = reader.ReadRow(header);
+	if(readHeaderErr){
+		std::cerr<<"ERROR: read header error."<<readHeaderErr<<std::endl;
+		return __LINE__;
+	}
+	if(header.size()==0){
+		std::cerr<<"ERROR: empty csv file header.";
+		return __LINE__;
+	}
+	for(size_t i=0; i<header.size(); ++i){
+		headerIndexMap[header[i]] = i;
+	}
+
+	// check the csv file before executing.
+	size_t columns = header.size();
+	size_t rowsToExecute = 0;
+	int readErr = 0;
+	std::vector<std::string> checkRow;
+	for( readErr = reader.ReadRow(checkRow); (readErr==0)&&checkRow.size(); ++rowsToExecute,reader.ReadRow(checkRow)){
+		if(checkRow.size()!=columns){
+			std::cerr<<"ERROR: parse csv file error at row "<< (rowsToExecute+1+1) 
+				<<", every row must have the same number of columns."<<std::endl;
+			return __LINE__;
+		}
+	}
+	if(readErr){
+		std::cerr<<"ERROR: parse csv file error at row "<< (rowsToExecute+1+1)
+			<<", error code:"<<readErr<<std::endl;
+		return __LINE__;
+	}
+	int resetErr = reader.Reset();		// return to the beginning of the csv file
+	readErr = reader.ReadRow(checkRow);	// skip header
+	if(resetErr){
+		std::cerr<<"ERROR: unexpected error, "<<resetErr<<", "<<readErr<< std::endl;
+		return __LINE__;
+	}
 
 	// debugging
 	//std::vector<std::string> row;
@@ -282,21 +336,6 @@ int main(int argc,char**argv){
 	}mysqlCloser(&mysql);
 	(void)mysqlCloser; // suppress warning
 
-	// read header
-	std::vector<std::string> header;
-	std::map<std::string,size_t> headerIndexMap;
-	int readHeaderErr = reader.ReadRow(header);
-	if(readHeaderErr){
-		std::cerr<<"ERROR : read header error."<<readHeaderErr<<std::endl;
-		return __LINE__;
-	}
-	if(header.size()==0){
-		std::cerr<<"ERROR : empty csv file.";
-		return __LINE__;
-	}
-	for(size_t i=0; i<header.size(); ++i){
-		headerIndexMap[header[i]] = i;
-	}
 
 	std::vector<std::string> fieldList;
 	std::vector<MYSQL_BIND> params;
@@ -334,7 +373,7 @@ int main(int argc,char**argv){
 				return __LINE__;
 			}
 			if( !std::isalnum(fieldNameCh) && (fieldNameCh!='_')){
-				statement += fieldNameCh;
+				statement += fieldNameCh;	// this character belongs to the query string
 				break;
 			}
 			fieldName += fieldNameCh;
@@ -366,7 +405,7 @@ int main(int argc,char**argv){
 
 	MYSQL_STMT *stmt = mysql_stmt_init(&mysql);
 	if(stmt==NULL){
-		std::cerr<<"ERROR: could not initialize statement handler";
+		std::cerr<<"ERROR: could not initialize statement handler, "<<mysql_error(&mysql)<<std::endl;
 		return __LINE__;
 	}
 	struct StmtCloser{
@@ -381,37 +420,89 @@ int main(int argc,char**argv){
 		return __LINE__;
 	}
 	
+	size_t rowsExecuted = 0;
 	std::vector<std::string> row;
 	for(reader.ReadRow(row); row.size(); row.clear(),reader.ReadRow(row)){
-		if(row.size() < header.size()){
-			std::cerr<<"invalid row"<<std::endl;
-			return __LINE__;
-		}
 		
 		for(size_t i=0; i<fieldList.size(); ++i){
 			params[i].buffer_type = MYSQL_TYPE_STRING;
-			params[i].buffer_length = row[headerIndexMap[fieldList[i]]].length();
-			params[i].buffer = (void*)row[headerIndexMap[fieldList[i]]].c_str();
+			params[i].buffer_length = row.at(headerIndexMap[fieldList[i]]).length();
+			params[i].buffer = (void*)row.at(headerIndexMap[fieldList[i]]).c_str();
 			params[i].is_null = 0;
 		}
 		if (mysql_stmt_bind_param (stmt, &(params[0])) != 0){
 			std::cerr<<"ERROR: could not bind. "<<mysql_stmt_error(stmt)<<", "<<mysql_error(&mysql)<<std::endl;
+			std::cerr<<"    error at row "<< rowsExecuted + 1 + 1<<std::endl;
 			return __LINE__;
 		}
 		if (mysql_stmt_execute (stmt) != 0){
 			std::cerr<<"ERROR: execute error. "<<mysql_stmt_error(stmt)<<", "<<mysql_error(&mysql)<<std::endl;
+			std::cerr<<"    error at row "<< rowsExecuted + 1 + 1<<std::endl;
 			return __LINE__;
 		}
+		
+		// check warning
+		int warnings = mysql_warning_count(&mysql);
+		if(warnings&&intArgs["warning_as_error"]){
+
+			std::cerr<<"ERROR: there's mysql warnings when executed at row "<< rowsExecuted + 1 + 1<<std::endl;
+
+			std::vector<std::string> warningMessages;
+			GetWarningMessages(mysql,warningMessages);
+			for(size_t i=0; i<warningMessages.size(); ++i){
+				std::cerr<<"    warning: "<<warningMessages[i]<<std::endl;
+			}
+			return __LINE__;
+		}
+
+		++rowsExecuted ;
 	}
+	std::clog<<rowsToExecute<<" rows executed."<<std::endl;
 	
 
 	if (mysql_query (&mysql,"commit")!=0){
-		std::cerr<<"commit trasaction error."<<std::endl;
+		std::cerr<<"ERROR: commit trasaction error. "<<mysql_error(&mysql)<<std::endl;
 		return __LINE__;
 	}
 
 	file.close();
 
 	return 0;
+}
+
+int GetWarningMessages(MYSQL& mysql, std::vector<std::string>& warningMessages){
+	MYSQL_RES *warningResult = NULL;
+	if( (mysql_query(&mysql,"show warnings")==0) && (warningResult = mysql_store_result(&mysql))){
+		struct MySqlResultFreeer{
+			MYSQL_RES *p;
+			MySqlResultFreeer(MYSQL_RES* or_p):p(or_p){}
+			~MySqlResultFreeer(){ if(p) mysql_free_result(p);} //
+		}mysqlResultFreeer(warningResult);
+		(void)mysqlResultFreeer; // suppress warning
+		
+		int warningMessageIndex = -1;
+		int fieldcount = mysql_num_fields(warningResult);
+		for(int i=0; i<fieldcount; ++i){
+			MYSQL_FIELD *field = mysql_fetch_field_direct(warningResult,i);
+			if(std::string( field->name ) == "Message"){
+				warningMessageIndex = i;
+			}
+		}
+		if( warningMessageIndex==-1){
+			return __LINE__;
+		}
+
+		for(MYSQL_ROW warningRow = mysql_fetch_row(warningResult); warningRow!=NULL; warningRow = mysql_fetch_row(warningResult)){
+			unsigned long *lengths = mysql_fetch_lengths(warningResult);
+			for(int i=0; i<fieldcount; ++i){
+				if(warningRow[i]==NULL){
+					continue;
+				}
+				if(i==warningMessageIndex){
+					warningMessages.push_back(std::string(warningRow[i]));
+				}
+			}
+		}
+	}
 }
 

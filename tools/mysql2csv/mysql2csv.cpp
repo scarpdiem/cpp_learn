@@ -188,12 +188,21 @@ int main(int argc,char**argv){
 	std::vector<std::string> header;
 
 	MYSQL_RES *result = mysql_store_result(&mysql);
+	struct MySqlResultFreeer{
+		MYSQL_RES *p;
+		MySqlResultFreeer(MYSQL_RES* or_p):p(or_p){}
+		~MySqlResultFreeer(){ if(p) mysql_free_result(p);} //
+	}mysqlResultFreeer(result);
+	(void)mysqlResultFreeer; // suppress warning
+
+	// get header
 	int fieldcount = mysql_num_fields(result);
 	for(int i=0; i<fieldcount; ++i){
 		MYSQL_FIELD *field = mysql_fetch_field_direct(result,i);
 		header.push_back(std::string( field->name ));
 	}
 
+	// write header
 	writer.WriteRow(header);
 
 	for(MYSQL_ROW row = mysql_fetch_row(result); row!=NULL; row = mysql_fetch_row(result)){
