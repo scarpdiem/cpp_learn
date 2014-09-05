@@ -277,29 +277,31 @@ int main(int argc,char**argv){
 	for(size_t i=0; i<header.size(); ++i){
 		headerIndexMap[header[i]] = i;
 	}
+	size_t columns = header.size();
 
 	// check the csv file before executing.
-	size_t columns = header.size();
-	size_t rowsToExecute = 0;
-	int readErr = 0;
-	std::vector<std::string> checkRow;
-	for( readErr = reader.ReadRow(checkRow); (readErr==0)&&checkRow.size(); ++rowsToExecute,reader.ReadRow(checkRow)){
-		if(checkRow.size()!=columns){
-			std::cerr<<"ERROR: parse csv file error at row "<< (rowsToExecute+1+1) 
-				<<", every row must have the same number of columns."<<std::endl;
+	if(&std::cin != pStream){
+		size_t rowsToExecute = 0;
+		int readErr = 0;
+		std::vector<std::string> checkRow;
+		for( readErr = reader.ReadRow(checkRow); (readErr==0)&&checkRow.size(); ++rowsToExecute, checkRow.clear(),reader.ReadRow(checkRow)){
+			if(checkRow.size()!=columns){
+				std::cerr<<"ERROR: parse csv file error at row "<< (rowsToExecute+1+1) 
+					<<", every row must have the same number of columns."<<std::endl;
+				return __LINE__;
+			}
+		}
+		if(readErr){
+			std::cerr<<"ERROR: parse csv file error at row "<< (rowsToExecute+1+1)
+				<<", error code:"<<readErr<<std::endl;
 			return __LINE__;
 		}
-	}
-	if(readErr){
-		std::cerr<<"ERROR: parse csv file error at row "<< (rowsToExecute+1+1)
-			<<", error code:"<<readErr<<std::endl;
-		return __LINE__;
-	}
-	int resetErr = reader.Reset();		// return to the beginning of the csv file
-	readErr = reader.ReadRow(checkRow);	// skip header
-	if(resetErr){
-		std::cerr<<"ERROR: unexpected error, "<<resetErr<<", "<<readErr<< std::endl;
-		return __LINE__;
+		int resetErr = reader.Reset();		// return to the beginning of the csv file
+		readErr = reader.ReadRow(checkRow);	// skip header
+		if(resetErr){
+			std::cerr<<"ERROR: unexpected error, "<<resetErr<<", "<<readErr<< std::endl;
+			return __LINE__;
+		}
 	}
 
 	// debugging
@@ -420,9 +422,16 @@ int main(int argc,char**argv){
 		return __LINE__;
 	}
 	
+	int executeReadErr = 0;
 	size_t rowsExecuted = 0;
 	std::vector<std::string> row;
-	for(reader.ReadRow(row); row.size(); row.clear(),reader.ReadRow(row)){
+	for(executeReadErr = reader.ReadRow(row); (executeReadErr==0) && row.size(); row.clear(), executeReadErr = reader.ReadRow(row)){
+
+		if(row.size()!=columns){
+			std::cerr<<"ERROR: parse csv file error at row "<< (rowsExecuted+1+1) 
+				<<", the header hava "<<columns<<" columns, while this row has "<<row.size()<<" columns."<<std::endl;
+			return __LINE__;
+		}
 		
 		for(size_t i=0; i<fieldList.size(); ++i){
 			params[i].buffer_type = MYSQL_TYPE_STRING;
@@ -457,7 +466,12 @@ int main(int argc,char**argv){
 
 		++rowsExecuted ;
 	}
-	std::clog<<rowsToExecute<<" rows executed."<<std::endl;
+	if(executeReadErr){
+		std::cerr<<"ERROR: parse csv file error at row "<< (rowsExecuted+1+1)
+			<<", error code:"<<executeReadErr<<std::endl;
+		return __LINE__;
+	}
+	std::clog<<rowsExecuted<<" rows executed."<<std::endl;
 	
 
 	if (mysql_query (&mysql,"commit")!=0){
