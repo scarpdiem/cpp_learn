@@ -2,6 +2,7 @@
  * Excute a MySQL query with each row read from the csv file except the header row.
  * The csv format used here comforms to [rfc4180](http://tools.ietf.org/html/rfc4180).
  * @author roxma
+ * @github https://github.com/roxma/cpp_learn/tree/master/tools/mysql2csv
  */
 
 #include <iostream>
@@ -233,7 +234,7 @@ int main(int argc,char**argv){
 	// intArgs["transaction"] = 1;
 	// intArgs["ignore_error"] = 0;
 	
-	args["null_cell_value"] = "NULL";
+	// args["null_cell_value"] = "NULL";
 	
 	args["input"] = "";
 

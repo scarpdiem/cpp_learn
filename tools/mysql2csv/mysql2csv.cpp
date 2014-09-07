@@ -2,6 +2,7 @@
  * Excute a MySQL query and store the result in csv format.
  * The csv format used here comforms to [rfc4180](http://tools.ietf.org/html/rfc4180).
  * @author roxma
+ * @github https://github.com/roxma/cpp_learn/tree/master/tools/mysql2csv
  */
 
 #include <iostream>
