@@ -1,6 +1,6 @@
 # mysql2csv 和 csv2mysql 工具
 
-在这里提供了两个使用 .csv 格式 的简单的 MySQL 数据库的导数据工具。csv 格式可以很容易地生成和解析，而且，也可以很容易地使用办公软件把 .csv 格式转换为 .xls/.xlsx 格式，或者把 .xls/.xlsx 格式转换为 .csv 格式的文件。
+在这里提供了两个使用 .csv 格式 的简单的 MySQL 数据库的导数据工具。[csv 格式](http://tools.ietf.org/html/rfc4180)可以很容易地生成和解析，而且，也可以很容易地使用办公软件把 .csv 格式转换为 .xls/.xlsx 格式，或者把 .xls/.xlsx 格式转换为 .csv 格式的文件。
 
 - mysql2csv - 将 MySQL 的数据导出为 csv 格式的文件。
 - csv2mysql - 将 csv 格式的文件的数据导入到 MySQL 数据库。
