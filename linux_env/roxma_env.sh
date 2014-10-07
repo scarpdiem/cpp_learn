@@ -22,7 +22,10 @@ function getRoxVimrcFile(){
 		hi TabLineFill     term=reverse cterm=reverse
 
 		" folding
-		autocmd BufNewFile,BufRead *.cpp,*.c,*.h,*.hpp  set foldmethod=indent
+		set foldenable
+		set foldmethod=syntax
+		set foldlevel=100
+		"autocmd BufNewFile,BufRead *.cpp,*.c,*.h,*.hpp  set foldmethod=syntax
 
 		" indentation
 		set tabstop=4
@@ -31,6 +34,7 @@ function getRoxVimrcFile(){
 		set noexpandtab
 
 		imap <C-V> <Esc>lp
+
 EOFVIMRC
 
 	local roxVimrcFile=$(echo "/tmp/roxma_vimrc_$(whoami)" | sed 's/[^[:alpha:]\/]//g')
@@ -43,6 +47,24 @@ alias vim='$(whereis -b vim | awk  '"'"'{print $2}'"'"') -S $(getRoxVimrcFile)'
 function cdl(){
 	cd `readlink -f $1` 
 }
+
+
+# for ctags
+#   for example: make_print_include_path_for_ctags make all
+function make_print_include_path_for_ctags(){
+        # print make command | filter compiling command | filter include options | filter include path
+        local includePath=$( $@ --just-print | grep -P '^(gcc|g\+\+)' | grep -ohP '\s\-I\s*[\S]+'  | sed "s/^\s\-I//" )
+		# The following is not a strict filter, but OK for ctags
+        # local defaultPath=$( g++ -E -x c++ - -v < /dev/null 2>&1 | grep -ohP '^\s\/\S+' )
+		local defaultPath=""
+        local allPath="${includePath} ${defaultpath}"
+		for p in $allPath
+		do
+			echo $(readlink -f $p)
+			# echo "$p"
+		done
+}
+
 
 # usage: 
 #   for ((i=1; i<=10; i++)); do echo $i>>log1.log; sleep 3; done &
