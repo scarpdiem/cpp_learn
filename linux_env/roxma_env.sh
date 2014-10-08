@@ -37,12 +37,13 @@ function getRoxVimrcFile(){
 
 EOFVIMRC
 
-	local roxVimrcFile=$(echo "/tmp/roxma_vimrc_$(whoami)" | sed 's/[^[:alpha:]\/]//g')
+	local roxVimrcFile=$(echo "/tmp/roxma_vimrc_$(whoami)" | sed 's/[^[:alpha:]/]//g')
 	echo "$roxVimrc" > "$roxVimrcFile"
 	echo "$roxVimrcFile"
 }
 
-alias vim='$(whereis -b vim | awk  '"'"'{print $2}'"'"') -S $(getRoxVimrcFile)'
+# alias vim='$(whereis -b vim | awk  '"'"'{print $2}'"'"') -S $(getRoxVimrcFile)'
+alias rvim='vim -S $(getRoxVimrcFile)'
 
 function cdl(){
 	cd `readlink -f $1` 
@@ -52,17 +53,13 @@ function cdl(){
 # for ctags
 #   for example: make_print_include_path_for_ctags make all
 function make_print_include_path_for_ctags(){
-        # print make command | filter compiling command | filter include options | filter include path
-        local includePath=$( $@ --just-print | grep -P '^(gcc|g\+\+)' | grep -ohP '\s\-I\s*[\S]+'  | sed "s/^\s\-I//" )
+	# print make command | filter compiling command | filter include options | filter include path
+	local includePath=$( $@ --just-print | grep -P '^(gcc|g\+\+)' | grep -ohP '\s\-I\s*[\S]+'  | sed "s/^\s\-I//" )
 		# The following is not a strict filter, but OK for ctags
-        # local defaultPath=$( g++ -E -x c++ - -v < /dev/null 2>&1 | grep -ohP '^\s\/\S+' )
+	# local defaultPath=$( g++ -E -x c++ - -v < /dev/null 2>&1 | grep -ohP '^\s\/\S+' )
 		local defaultPath=""
-        local allPath="${includePath} ${defaultpath}"
-		for p in $allPath
-		do
-			echo $(readlink -f $p)
-			# echo "$p"
-		done
+	local allPath="${includePath} ${defaultpath}"
+	echo $(for p in $allPath ; do echo "$(readlink -f $p)" ; done) | xargs -n1 | sort -u | xargs
 }
 
 
