@@ -47,7 +47,18 @@ alias vim="$(which vim | awk '{print $NF}') --cmd \"source $(getRoxVimrcFile)\""
 # alias rvim='vim -S $(getRoxVimrcFile)'
 
 function cdl(){
-	cd `readlink -f $1` 
+	if [[ -L "$1" ]]
+	then
+		local absPath="$(readlink -f $1)"
+		if [[ -f $absPath ]]
+		then
+			cd $(dirname $absPath)
+		else
+			cd $absPath
+		fi
+	else
+		cd `readlink -f $1` 
+	fi
 }
 
 
