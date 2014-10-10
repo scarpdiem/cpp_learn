@@ -72,11 +72,11 @@ function make_print_include_path_for_ctags(){
 	local dirStack=("$(readlink -f .)")
 
 	# print the command, and read the output line by line
-	$@ 2>&1 3>&1 | while read -r line ; do
+	$@ 2>&1 | while read -r line ; do
 
 		# match string, for example:
 		# make[1]: Entering directory `/home/roxma/test/src'
-		if [[ "$line" =~ [[:alnum:]]*make[[:alnum:]]*\[[[:digit:]+]\]\:[[:blank:]](Entering)[[:blank:]]directory[[:blank:]]  ]]
+		if [[ "$line" =~ [[:alnum:]]*make[[:alnum:]]*\[[[:digit:]]+\]\:[[:blank:]](Entering)[[:blank:]]directory[[:blank:]]  ]]
 		then
 			# take /home/roxma/test/src from the matched string
 			local dir=$(echo "$line" | grep -o -P "(?<=\`).*(?=')")
@@ -86,7 +86,7 @@ function make_print_include_path_for_ctags(){
 
 		# match string, for example:
 		# make[1]: Leaving directory `/home/roxma/test/src'
-		if [[ "$line" =~ [[:alnum:]]*make[[:alnum:]]*\[[[:digit:]+]\]\:[[:blank:]](Leaving)[[:blank:]]directory[[:blank:]]  ]]
+		if [[ "$line" =~ [[:alnum:]]*make[[:alnum:]]*\[[[:digit:]]+\]\:[[:blank:]](Leaving)[[:blank:]]directory[[:blank:]]  ]]
 		then
 			# take /home/roxma/test/src from the matched string
 			local dir=$(echo "$line" | grep -o -P "(?<=\`).*(?=')")
