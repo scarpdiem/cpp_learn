@@ -42,8 +42,9 @@ EOFVIMRC
 	echo "$roxVimrcFile"
 }
 
-# alias vim='$(whereis -b vim | awk  '"'"'{print $2}'"'"') -S $(getRoxVimrcFile)'
-alias rvim='vim -S $(getRoxVimrcFile)'
+unalias vim
+alias vim="$(which vim | awk '{print $NF}') -S $(getRoxVimrcFile)"
+# alias rvim='vim -S $(getRoxVimrcFile)'
 
 function cdl(){
 	cd `readlink -f $1` 
@@ -52,6 +53,7 @@ function cdl(){
 
 # for ctags
 #   for example: make_print_include_path_for_ctags make all
+# author: roxma
 function make_print_include_path_for_ctags(){
 	# print make command | filter compiling command | filter include options | filter include path
 	local includePath=$( $@ --just-print | grep -P '^(gcc|g\+\+)' | grep -ohP '\s\-I\s*[\S]+'  | sed "s/^\s\-I//" )
@@ -59,6 +61,7 @@ function make_print_include_path_for_ctags(){
 	# local defaultPath=$( g++ -E -x c++ - -v < /dev/null 2>&1 | grep -ohP '^\s\/\S+' )
 		local defaultPath=""
 	local allPath="${includePath} ${defaultpath}"
+	# echo all absolute path | ... sort and delete duplicate path
 	echo $(for p in $allPath ; do echo "$(readlink -f $p)" ; done) | xargs -n1 | sort -u | xargs
 }
 
