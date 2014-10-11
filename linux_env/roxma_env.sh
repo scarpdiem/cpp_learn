@@ -22,10 +22,10 @@ function getRoxVimrcFile(){
 		hi TabLineFill     term=reverse cterm=reverse
 
 		" folding
-		" set foldenable
-		" set foldmethod=syntax
-		" set foldlevel=100
-		autocmd BufNewFile,BufRead *.cpp,*.c,*.h,*.hpp  set foldmethod=syntax
+		set foldenable
+		set foldmethod=syntax
+		set foldlevel=100
+		" autocmd BufNewFile,BufRead *.cpp,*.c,*.h,*.hpp  set foldmethod=syntax
 
 		" indentation
 		set tabstop=4
@@ -42,9 +42,14 @@ EOFVIMRC
 	echo "$roxVimrcFile"
 }
 
+# vim 
 unalias vim 2>/dev/null
-alias vim="$(which vim | awk '{print $NF}') --cmd \"source $(getRoxVimrcFile)\""
-# alias rvim='vim -S $(getRoxVimrcFile)'
+alias vim="$(which vim | awk '{print $NF}') -S \"$(getRoxVimrcFile)\""
+
+# ctags
+unalias ctags 2>/dev/null
+alias ctags="$(which ctags | awk '{print $NF}') --c-kinds=+p"
+
 
 function cdl(){
 	if [[ -L "$1" ]]
