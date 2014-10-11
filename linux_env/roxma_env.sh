@@ -71,6 +71,9 @@ function make_print_include_path_for_ctags(){
 	
 	local dirStack=("$(readlink -f .)")
 
+	local lcAllBackup="$LC_ALL"
+	export LC_ALL="${lcAllBackup/zh_CN/en_US}"
+
 	# print the command, and read the output line by line
 	$@ 2>&1 | while read -r line ; do
 
@@ -111,6 +114,8 @@ function make_print_include_path_for_ctags(){
 		fi
 		
 	done | xargs -n1 | sort -u | xargs # remove duplicate words
+
+	export LC_ALL="$lcAllBackup"
 }
 
 
