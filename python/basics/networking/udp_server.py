@@ -18,10 +18,9 @@ def Entry():
 
 	print("address:" + str(address))
 	print("content size = " + str(len(buffer)))
-	print(buffer)
 	
-	
-
+	import pprint
+	pprint.pprint(buffer)
 
 
 Entry()

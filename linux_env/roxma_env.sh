@@ -188,3 +188,71 @@ function scpex(){
 
 }
 
+# options:
+#   -h host
+#   -p port
+#   -d data to be sendded
+#   -f read data from file
+function udpto(){
+	
+	local pythonCmd="\
+#!/usr/bin/env python2
+# -*- coding: utf-8 -*-
+
+# This program send a udp packet and then exit
+
+def Entry():
+
+	# get opts and args
+	import getopt, sys
+	try:
+		opts, args = getopt.getopt(sys.argv[1:], ':h:p:d:f:')
+	except getopt.GetoptError as err:
+		# print help information and exit:
+		print str(err) # will print something like 'option -a not recognized'
+		exit(2)
+
+	content = ''
+	host = ''
+	port = 0
+	
+	for o, a in opts:
+		if o == '-h':
+			host = a
+		elif o == '-p':
+			port = int(a)
+		elif o == '-d':
+			content = a
+		elif o == '-f':
+			fileName = a
+			f = open(fileName, 'rb')
+			content = f.read()
+			f.close()
+	
+	if host=='':
+		raise Exception('host should be specified')
+	if port == 0:
+		raise Exception('port should be specified')
+
+	print 'options: %s' % opts
+
+	sendCount = UdpSendPacket(content, host, port)
+	print '%s bytes sended' % sendCount
+	
+	exit(0)
+
+def UdpSendPacket(content, host, port):
+	import socket
+	udp = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+	address = (host,port)
+	sended = udp.sendto(content, address)
+	udp.close()
+	return sended
+
+Entry()
+"
+	python -c "$pythonCmd" $@
+
+}
+
+
