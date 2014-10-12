@@ -193,7 +193,8 @@ function scpex(){
 #   -p port
 #   -d data to be sendded
 #   -f read data from file
-function udpto(){
+#   -r wait until a response package is read
+function udpsend(){
 	
 	local pythonCmd="\
 #!/usr/bin/env python2
@@ -204,17 +205,22 @@ function udpto(){
 def Entry():
 
 	# get opts and args
-	import getopt, sys
+	import getopt, sys 
+	if sys.platform == 'win32':  # write binary data to stdout
+		import os, msvcrt
+		msvcrt.setmode(sys.stdout.fileno(), os.O_BINARY)
+
 	try:
-		opts, args = getopt.getopt(sys.argv[1:], ':h:p:d:f:')
+		opts, args = getopt.getopt(sys.argv[1:], ':h:p:d:f:r')
 	except getopt.GetoptError as err:
 		# print help information and exit:
-		print str(err) # will print something like 'option -a not recognized'
+		sys.stderr.write(str(err)+'\n') # will print something like 'option -a not recognized'
 		exit(2)
 
 	content = ''
 	host = ''
 	port = 0
+	waitResponse = False
 	
 	for o, a in opts:
 		if o == '-h':
@@ -228,26 +234,34 @@ def Entry():
 			f = open(fileName, 'rb')
 			content = f.read()
 			f.close()
+		elif o == '-r':
+			waitResponse = True
 	
+	sys.stderr.write('options: %s\n' % opts)
+
 	if host=='':
 		raise Exception('host should be specified')
 	if port == 0:
 		raise Exception('port should be specified')
 
-	print 'options: %s' % opts
+	address = (host,port)
 
-	sendCount = UdpSendPacket(content, host, port)
-	print '%s bytes sended' % sendCount
-	
-	exit(0)
-
-def UdpSendPacket(content, host, port):
 	import socket
 	udp = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-	address = (host,port)
-	sended = udp.sendto(content, address)
+	sendCount = udp.sendto(content, address)
+
+	sys.stderr.write( '%s bytes sended\n' % sendCount)
+
+	if waitResponse:
+		response, resAddr = udp.recvfrom(65536)
+		sys.stdout.write(response)
+		sys.stderr.write( '%s bytes recieved\n' % len(response))
+		import pprint
+		sys.stderr.write( pprint.pformat(response) + '\n')
+
 	udp.close()
-	return sended
+	 
+	exit(0)
 
 Entry()
 "
