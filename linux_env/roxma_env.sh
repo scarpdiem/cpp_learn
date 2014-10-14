@@ -156,7 +156,6 @@ options:
   -p Port
   -d Data to be sendded. If this option is not present, data will be read from stdin. If you want to send binary data, You could use the printf command, for example:
 		printf "\x01" | udpsend -h localhost -p 12345
-  -f Send the file as an UDP packet
   -r Wait until a response package is read, the readed content will be outupt to stdout. Note that the debug information of this tool is output to stderr.
 '
 		return 1
