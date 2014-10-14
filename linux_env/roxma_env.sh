@@ -124,48 +124,6 @@ function make_print_include_path_for_ctags(){
 }
 
 
-# usage: 
-#   for ((i=1; i<=10; i++)); do echo $i>>log1.log; sleep 3; done &
-#   for ((i=1; i<=10; i++)); do echo $i>>log2.log; sleep 3; done &
-#   tails *.log
-# author: roxma
-# function tails(){
-# 	local files=$@
-# 
-# 	# subScript to trap signal
-# 	local subScript='
-# 
-# 	thisScript=$1
-# 
-# 	trap '"'"'rm -f $fifoName $thisScript; echo tails exit'"'"' EXIT 
-# 
-# 	fifoName=""
-# 	tmpName=/tmp/tails_fifo_$$
-# 	mkfifo $tmpName
-# 	if [ $? -eq 0 ]; then
-# 		fifoName=$tmpName
-# 	fi
-# 	if [ "$fifoName" == "" ]; then
-# 		echo "cannot create named pipe" 1>&2
-# 		exit -1
-# 	fi
-# 	
-# 	for file in '"$files"'
-# 	do
-# 		echo "listen $file"
-# 		escapedFile=$(echo $file | sed -e '"'"'s/[\/&]/\\&/g'"'"')
-# 		tail --pid=$$ -f $file | sed "s/^/$escapedFile# /g" &
-# 	done
-# 	
-# 	while true; do cat $fifoName; done 
-# 	'
-# 
-# 	local scriptFile=/tmp/tails_$$.sh
-# 	echo "$subScript" > $scriptFile
-# 	chmod 755 $scriptFile
-# 	/bin/bash $scriptFile $scriptFile
-# }
-
 function scpex(){
 
         read -p "password: " password
@@ -188,13 +146,21 @@ function scpex(){
 
 }
 
-# options:
-#   -h host
-#   -p port
-#   -d data to be sendded
-#   -f read data from file
-#   -r wait until a response package is read
 function udpsend(){
+	
+	if [[ "$@" == "" ]]
+	then
+		echo '
+options:
+  -h Host
+  -p Port
+  -d Data to be sendded. If this option is not present, data will be read from stdin. If you want to send binary data, You could use the printf command, for example:
+		printf "\x01" | udpsend -h localhost -p 12345
+  -f Send the file as an UDP packet
+  -r Wait until a response package is read, the readed content will be outupt to stdout. Note that the debug information of this tool is output to stderr.
+'
+		return 1
+	fi
 	
 	local pythonCmd="\
 #!/usr/bin/env python2
@@ -220,6 +186,7 @@ def Entry():
 	content = ''
 	host = ''
 	port = 0
+	dataOptionSet = False
 	waitResponse = False
 	
 	for o, a in opts:
@@ -228,6 +195,7 @@ def Entry():
 		elif o == '-p':
 			port = int(a)
 		elif o == '-d':
+			dataOptionSet = True
 			content = a
 		elif o == '-f':
 			fileName = a
@@ -236,6 +204,9 @@ def Entry():
 			f.close()
 		elif o == '-r':
 			waitResponse = True
+
+	if not dataOptionSet:
+		content = sys.stdin.read()
 	
 	sys.stderr.write('options: %s\n' % opts)
 
@@ -255,7 +226,7 @@ def Entry():
 	if waitResponse:
 		response, resAddr = udp.recvfrom(65536)
 		sys.stdout.write(response)
-		sys.stderr.write( '%s bytes recieved\n' % len(response))
+		sys.stderr.write( '%s bytes recieved: ' % len(response))
 		import pprint
 		sys.stderr.write( pprint.pformat(response) + '\n')
 
@@ -266,7 +237,6 @@ def Entry():
 Entry()
 "
 	python -c "$pythonCmd" $@
-
 }
 
 
