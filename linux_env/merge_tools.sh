@@ -13,11 +13,11 @@ function Entry(){
 	local pythonScripts=$(find . -mindepth 2 -name "*.py")
 	for pythonScript in $pythonScripts
 	do
-		local encodedScriptContent=$(cat $pythonScript | base64)
+		local encodedScriptContent=$(gzip -c $pythonScript | base64)
 		local scriptName=$(basename $pythonScript)
 		echo "
 			function ${scriptName/%.py/}(){
-				echo \"$encodedScriptContent\" | base64 -d | python - \$@
+				echo \"$encodedScriptContent\" | base64 -d | zcat | python - \$@
 			}
 			" >> $output
 	done
