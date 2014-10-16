@@ -17,7 +17,7 @@ function Entry(){
 		local scriptName=$(basename $pythonScript)
 		echo "
 			function ${scriptName/%.py/}(){
-				echo \"$encodedScriptContent\" | base64 -d | python
+				echo \"$encodedScriptContent\" | base64 -d | python - \$@
 			}
 			" >> $output
 	done

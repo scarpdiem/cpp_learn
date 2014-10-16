@@ -185,20 +185,20 @@ dFJlc3BvbnNlOgoJCXJlc3BvbnNlLCByZXNBZGRyID0gdWRwLnJlY3Zmcm9tKDY1NTM2KQoJCXN5
 cy5zdGRvdXQud3JpdGUocmVzcG9uc2UpCgkJc3lzLnN0ZGVyci53cml0ZSggJyVzIGJ5dGVzIHJl
 Y2lldmVkOiAnICUgbGVuKHJlc3BvbnNlKSkKCQlpbXBvcnQgcHByaW50CgkJc3lzLnN0ZGVyci53
 cml0ZSggcHByaW50LnBmb3JtYXQocmVzcG9uc2UpICsgJ1xuJykKCgl1ZHAuY2xvc2UoKQoJIAoJ
-ZXhpdCgwKQoKRW50cnkoKQoK" | base64 -d | python
+ZXhpdCgwKQoKRW50cnkoKQoK" | base64 -d | python - $@
 			}
 			
 
 			function urldecode(){
 				echo "IyEvdXNyL2Jpbi9lbnYgcHl0aG9uMgojIC0qLSBjb2Rpbmc6IHV0Zi04IC0qLQoKZGVmIEVudHJ5
 KCk6CgkKCWZyb20gdXJsbGliIGltcG9ydCB1cmxlbmNvZGUsIHVucXVvdGUKCWltcG9ydCBzeXMK
-CXN5cy5zdGRvdXQud3JpdGUodW5xdW90ZShzeXMuc3RkaW4ucmVhZCgpKSkKCkVudHJ5KCkKCg==" | base64 -d | python
+CXN5cy5zdGRvdXQud3JpdGUodW5xdW90ZShzeXMuc3RkaW4ucmVhZCgpKSkKCkVudHJ5KCkKCg==" | base64 -d | python - $@
 			}
 			
 
 			function urlencode(){
 				echo "IyEvdXNyL2Jpbi9lbnYgcHl0aG9uMgojIC0qLSBjb2Rpbmc6IHV0Zi04IC0qLQoKZGVmIEVudHJ5
 KCk6CgkKCWZyb20gdXJsbGliIGltcG9ydCB1cmxlbmNvZGUsIHF1b3RlCglpbXBvcnQgc3lzCglz
-eXMuc3Rkb3V0LndyaXRlKHF1b3RlKHN5cy5zdGRpbi5yZWFkKCkpKQoKRW50cnkoKQo=" | base64 -d | python
+eXMuc3Rkb3V0LndyaXRlKHF1b3RlKHN5cy5zdGRpbi5yZWFkKCkpKQoKRW50cnkoKQo=" | base64 -d | python - $@
 			}
 			
