@@ -123,27 +123,3 @@ function make_print_include_path_for_ctags(){
 	export LC_ALL="$lcAllBackup"
 }
 
-
-function scpex(){
-
-        read -p "password: " password
-
-        local expectCmd='
-
-        set timeout 10
-
-        spawn scp '"$@"'
-        expect {
-                "*yes/no" { send "yes\r" }
-                "*password" {
-                        send "'"$password"'\r"
-                        exp_continue
-                }
-        }
-        '
-
-        expect -c "$expectCmd"
-
-}
-
-
