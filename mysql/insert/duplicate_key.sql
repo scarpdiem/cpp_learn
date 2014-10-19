@@ -1,6 +1,4 @@
 
-# mysql -uroot --database=test -e 'source duplicate_key.sql'
-
 create table duplicate_test(id bigint primary key, cnt bigint not null)engine=Innodb, charset=utf8;
 
 insert into duplicate_test(id, cnt) values(1,1), (2,2), (3, 3);
