@@ -31,52 +31,6 @@ set -o emacs
 # set editing-mode vi
 # bind -m vi-insert “\C-l”:clear-screen
 
-function getRoxVimrcFile(){
-	local roxVimrc
-	read -d "" roxVimrc <<-EOFVIMRC
-
-		" file tab switching 
-		nmap te  :tabedit 
-		nmap tn  :tabn<Enter>
-		nmap tp  :tabN<Enter>
-		nmap <S-l> :tabn<Enter>
-		nmap <S-h> :tabN<Enter>
-
-		" file tab highlighting
-		hi TabLineSel      term=bold cterm=bold
-		hi TabLine         term=underline cterm=underline ctermfg=0 ctermbg=7
-		hi TabLineFill     term=reverse cterm=reverse
-
-		" folding
-		set foldenable
-		set foldmethod=syntax
-		set foldlevel=100
-		" autocmd BufNewFile,BufRead *.cpp,*.c,*.h,*.hpp  set foldmethod=syntax
-
-		" indentation
-		set tabstop=4
-		set softtabstop=4
-		set shiftwidth=4
-		set noexpandtab
-
-		imap <C-V> <Esc>lp
-
-EOFVIMRC
-
-	local roxVimrcFile=$(echo "/tmp/roxma_vimrc_$(whoami)" | sed 's/[^[:alpha:]/]//g')
-	echo "$roxVimrc" > "$roxVimrcFile"
-	echo "$roxVimrcFile"
-}
-
-# vim 
-unalias vim 2>/dev/null
-alias vim="$(which vim | awk '{print $NF}') -S \"$(getRoxVimrcFile)\""
-
-# ctags
-unalias ctags 2>/dev/null
-alias ctags="$(which ctags | awk '{print $NF}') --c-kinds=+p --c++-kinds=+p"
-
-
 function cdl(){
 	if [[ -L "$1" ]]
 	then
@@ -195,4 +149,31 @@ python  -c "`echo 'QlpoOTFBWSZTWT3+gYYAABJfgAAwaHewUQIAAAo/5/+gMAClg0JTZR5I/RR6J
 iAAADQAlKI9TanlPUzSPKGEepkxPQyIwpOT3iy2KOEodm4JtL4KrveP2ZqNDCi6iIOMRZ1F4lcHm
 UhszDLNkKWrU58otbQaeIOrq/mhkWM5pXULkapLVBEL4bFsUAQSSiZGDIGZ8g3BPXY9eWHBgkdox
 JiyTyBmJ3UtGtSI8UORkCg4M8E0YeuRTx9jho0SG4u5IpwoSB7/QMMA=' | b64decode | bzcat`"  $@
+}
+function getRoxVimrcFile(){
+
+	local roxVimrcFile=/tmp/rox_vimrc_$(echo "$(whoami)" | b64encode )
+	
+echo 'CiIgZmlsZSB0YWIgc3dpdGNoaW5nIApubWFwIHRlICA6dGFiZWRpdCAKbm1hcCB0biAgOnRhYm48
+RW50ZXI+Cm5tYXAgdHAgIDp0YWJOPEVudGVyPgpubWFwIDxTLWw+IDp0YWJuPEVudGVyPgpubWFw
+IDxTLWg+IDp0YWJOPEVudGVyPgoKIiBmaWxlIHRhYiBoaWdobGlnaHRpbmcKaGkgVGFiTGluZVNl
+bCAgICAgIHRlcm09Ym9sZCBjdGVybT1ib2xkCmhpIFRhYkxpbmUgICAgICAgICB0ZXJtPXVuZGVy
+bGluZSBjdGVybT11bmRlcmxpbmUgY3Rlcm1mZz0wIGN0ZXJtYmc9NwpoaSBUYWJMaW5lRmlsbCAg
+ICAgdGVybT1yZXZlcnNlIGN0ZXJtPXJldmVyc2UKCiIgZm9sZGluZwpzZXQgZm9sZGVuYWJsZQpz
+ZXQgZm9sZG1ldGhvZD1zeW50YXgKc2V0IGZvbGRsZXZlbD0xMDAKIiBhdXRvY21kIEJ1Zk5ld0Zp
+bGUsQnVmUmVhZCAqLmNwcCwqLmMsKi5oLCouaHBwICBzZXQgZm9sZG1ldGhvZD1zeW50YXgKCiIg
+aW5kZW50YXRpb24Kc2V0IHRhYnN0b3A9NApzZXQgc29mdHRhYnN0b3A9NApzZXQgc2hpZnR3aWR0
+aD00CnNldCBub2V4cGFuZHRhYgoKaW1hcCA8Qy1WPiA8RXNjPmxwCgo=' | b64decode > $roxVimrcFile
+echo "$roxVimrcFile"
+}
+{
+
+
+# vim 
+unalias vim 2>/dev/null
+alias vim="$(which vim | awk '{print $NF}') -S \"$(getRoxVimrcFile)\""
+
+# ctags
+unalias ctags 2>/dev/null
+alias ctags="$(which ctags | awk '{print $NF}') --c-kinds=+p --c++-kinds=+p"
 }

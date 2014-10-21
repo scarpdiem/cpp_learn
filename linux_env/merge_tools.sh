@@ -12,18 +12,25 @@ function Entry(){
 	echo '#!/bin/bash' 
 
 	for moduleDir in $moduleDirs ; do
-		if [[ -f $moduleDir/merge_tools.sh ]] ; then
-			echo "$moduleDir/merge_tools.sh" 1>&2
-			cd $moduleDir
-			merge_tools.sh
-			cd $baseDir
-		else
+		# simple modules 
+		if [[ ! -f $moduleDir/merge_tools.sh ]] ; then
 			echo "$moduleDir ModuleDefaultOutput" 1>&2
 			cd $moduleDir
 			ModuleDefaultOutput
 			cd $baseDir
 		fi
 	done
+
+	for moduleDir in $moduleDirs ; do
+		# more complicated modules
+		if [[ -f $moduleDir/merge_tools.sh ]] ; then
+			echo "$moduleDir/merge_tools.sh" 1>&2
+			cd $moduleDir
+			./merge_tools.sh
+			cd $baseDir
+		fi
+	done
+
 }
 
 function ModuleDefaultOutput(){

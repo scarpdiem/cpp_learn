@@ -5,52 +5,6 @@ set -o emacs
 # set editing-mode vi
 # bind -m vi-insert “\C-l”:clear-screen
 
-function getRoxVimrcFile(){
-	local roxVimrc
-	read -d "" roxVimrc <<-EOFVIMRC
-
-		" file tab switching 
-		nmap te  :tabedit 
-		nmap tn  :tabn<Enter>
-		nmap tp  :tabN<Enter>
-		nmap <S-l> :tabn<Enter>
-		nmap <S-h> :tabN<Enter>
-
-		" file tab highlighting
-		hi TabLineSel      term=bold cterm=bold
-		hi TabLine         term=underline cterm=underline ctermfg=0 ctermbg=7
-		hi TabLineFill     term=reverse cterm=reverse
-
-		" folding
-		set foldenable
-		set foldmethod=syntax
-		set foldlevel=100
-		" autocmd BufNewFile,BufRead *.cpp,*.c,*.h,*.hpp  set foldmethod=syntax
-
-		" indentation
-		set tabstop=4
-		set softtabstop=4
-		set shiftwidth=4
-		set noexpandtab
-
-		imap <C-V> <Esc>lp
-
-EOFVIMRC
-
-	local roxVimrcFile=$(echo "/tmp/roxma_vimrc_$(whoami)" | sed 's/[^[:alpha:]/]//g')
-	echo "$roxVimrc" > "$roxVimrcFile"
-	echo "$roxVimrcFile"
-}
-
-# vim 
-unalias vim 2>/dev/null
-alias vim="$(which vim | awk '{print $NF}') -S \"$(getRoxVimrcFile)\""
-
-# ctags
-unalias ctags 2>/dev/null
-alias ctags="$(which ctags | awk '{print $NF}') --c-kinds=+p --c++-kinds=+p"
-
-
 function cdl(){
 	if [[ -L "$1" ]]
 	then

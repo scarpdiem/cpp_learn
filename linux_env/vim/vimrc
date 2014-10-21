@@ -1,0 +1,27 @@
+
+" file tab switching 
+nmap te  :tabedit 
+nmap tn  :tabn<Enter>
+nmap tp  :tabN<Enter>
+nmap <S-l> :tabn<Enter>
+nmap <S-h> :tabN<Enter>
+
+" file tab highlighting
+hi TabLineSel      term=bold cterm=bold
+hi TabLine         term=underline cterm=underline ctermfg=0 ctermbg=7
+hi TabLineFill     term=reverse cterm=reverse
+
+" folding
+set foldenable
+set foldmethod=syntax
+set foldlevel=100
+" autocmd BufNewFile,BufRead *.cpp,*.c,*.h,*.hpp  set foldmethod=syntax
+
+" indentation
+set tabstop=4
+set softtabstop=4
+set shiftwidth=4
+set noexpandtab
+
+imap <C-V> <Esc>lp
+
