@@ -1,28 +1,50 @@
 #!/bin/bash
 
+# ./merge_tools.sh > output.sh
+
 option_compress=1
 
 function Entry(){
 
-	local output=output.sh
-	echo '#!/bin/bash' > $output
+	local baseDir="$(readlink -f .)"
+	local moduleDirs="$(find . -mindepth 1 -type d)"
 
+	echo '#!/bin/bash' 
+
+	for moduleDir in $moduleDirs ; do
+		if [[ -f $moduleDir/merge_tools.sh ]] ; then
+			echo "$moduleDir/merge_tools.sh" 1>&2
+			cd $moduleDir
+			merge_tools.sh
+			cd $baseDir
+		else
+			echo "$moduleDir ModuleDefaultOutput" 1>&2
+			cd $moduleDir
+			ModuleDefaultOutput
+			cd $baseDir
+		fi
+	done
+}
+
+function ModuleDefaultOutput(){
 	# handle bashScripts
-	local bashScripts=$(find . -mindepth 2 -name "*.sh")
-	cat $bashScripts >> $output
+	local bashScripts="$(find . -mindepth 1 -name "*.sh")"
+	for bashScriptFile in $bashScripts ; do
+		cat $bashScriptFile 
+	done
 
-	local pythonScripts=$(find . -mindepth 2 -name "*.py")
+	local pythonScripts=$(find . -mindepth 1 -name "*.py")
 	for pythonScript in $pythonScripts
 	do
 		local scriptName=$(basename $pythonScript)
 		echo \
-			"function ${scriptName/%.py/}(){
-				  python  -c \"\`$(TextFileEncodedToScript $pythonScript)\`\"  \$@
-			}">> $output
+"function ${scriptName/%.py/}(){
+python  -c \"\`$(TextFileEncodedToScript $pythonScript)\`\"  \$@
+}"
 	done
-	
 }
 
+##
 # encode text file content to bash script string
 function TextFileEncodedToScript(){
 	# The client macine may not have base64 program, thus we use the b64decode 
