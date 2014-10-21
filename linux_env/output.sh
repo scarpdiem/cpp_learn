@@ -1,4 +1,29 @@
 #!/bin/bash
+#!/bin/bash
+
+
+function scpex(){
+
+        read -p "password: " password
+
+        local expectCmd='
+
+        set timeout 10
+
+        spawn scp '"$@"'
+        expect {
+                "*yes/no" { send "yes\r" }
+                "*password" {
+                        send "'"$password"'\r"
+                        exp_continue
+                }
+        }
+        '
+
+        expect -c "$expectCmd"
+
+}
+
 #/bin/bash
 
 set -o emacs
@@ -125,80 +150,55 @@ function make_print_include_path_for_ctags(){
 }
 
 
-function scpex(){
-
-        read -p "password: " password
-
-        local expectCmd='
-
-        set timeout 10
-
-        spawn scp '"$@"'
-        expect {
-                "*yes/no" { send "yes\r" }
-                "*password" {
-                        send "'"$password"'\r"
-                        exp_continue
-                }
-        }
-        '
-
-        expect -c "$expectCmd"
-
+function b64encode(){
+	python -c '
+import base64, sys
+sys.stdout.write(base64.b64encode(sys.stdin.read()))
+	'
 }
 
-
+function b64decode(){
+	python -c '
+import base64, sys
+sys.stdout.write(base64.b64decode(sys.stdin.read()))
+	'
+}
 
 			function udpsend(){
-				echo "IyEvdXNyL2Jpbi9lbnYgcHl0aG9uMgojIC0qLSBjb2Rpbmc6IHV0Zi04IC0qLQoKIyBUaGlzIHBy
-b2dyYW0gc2VuZCBhIHVkcCBwYWNrZXQgYW5kIHRoZW4gZXhpdAoKZGVmIEVudHJ5KCk6CgoJaW1w
-b3J0IHN5cwoJaWYgbGVuKHN5cy5hcmd2KT09MToKCQlzeXMuc3RkZXJyLndyaXRlKCcnJwpvcHRp
-b25zOgogIC1oIEhvc3QKICAtcCBQb3J0CiAgLWQgRGF0YSB0byBiZSBzZW5kZGVkLiBJZiB0aGlz
-IG9wdGlvbiBpcyBub3QgcHJlc2VudCwgZGF0YSB3aWxsIGJlIHJlYWQgZnJvbSBzdGRpbi4gSWYg
-eW91IHdhbnQgdG8gc2VuZCBiaW5hcnkgZGF0YSwgWW91IGNvdWxkIHVzZSB0aGUgcHJpbnRmIGNv
-bW1hbmQsIGZvciBleGFtcGxlOgoJCXByaW50ZiAiXHgwMSIgfCB1ZHBzZW5kIC1oIGxvY2FsaG9z
-dCAtcCAxMjM0NQogIC1yIFdhaXQgdW50aWwgYSByZXNwb25zZSBwYWNrYWdlIGlzIHJlYWQsIHRo
-ZSByZWFkZWQgY29udGVudCB3aWxsIGJlIG91dHVwdCB0byBzdGRvdXQuIE5vdGUgdGhhdCB0aGUg
-ZGVidWcgaW5mb3JtYXRpb24gb2YgdGhpcyB0b29sIGlzIG91dHB1dCB0byBzdGRlcnIuCicnJykK
-CQlleGl0KDApCgoJIyBnZXQgb3B0cyBhbmQgYXJncwoJaW1wb3J0IGdldG9wdCwgc3lzIAoJaWYg
-c3lzLnBsYXRmb3JtID09ICd3aW4zMic6ICAjIHdyaXRlIGJpbmFyeSBkYXRhIHRvIHN0ZG91dAoJ
-CWltcG9ydCBvcywgbXN2Y3J0CgkJbXN2Y3J0LnNldG1vZGUoc3lzLnN0ZG91dC5maWxlbm8oKSwg
-b3MuT19CSU5BUlkpCgoJdHJ5OgoJCW9wdHMsIGFyZ3MgPSBnZXRvcHQuZ2V0b3B0KHN5cy5hcmd2
-WzE6XSwgJzpoOnA6ZDpmOnInKQoJZXhjZXB0IGdldG9wdC5HZXRvcHRFcnJvciBhcyBlcnI6CgkJ
-IyBwcmludCBoZWxwIGluZm9ybWF0aW9uIGFuZCBleGl0OgoJCXN5cy5zdGRlcnIud3JpdGUoc3Ry
-KGVycikrJ1xuJykgIyB3aWxsIHByaW50IHNvbWV0aGluZyBsaWtlICdvcHRpb24gLWEgbm90IHJl
-Y29nbml6ZWQnCgkJZXhpdCgyKQoKCWNvbnRlbnQgPSAnJwoJaG9zdCA9ICcnCglwb3J0ID0gMAoJ
-ZGF0YU9wdGlvblNldCA9IEZhbHNlCgl3YWl0UmVzcG9uc2UgPSBGYWxzZQoJCglmb3IgbywgYSBp
-biBvcHRzOgoJCWlmIG8gPT0gJy1oJzoKCQkJaG9zdCA9IGEKCQllbGlmIG8gPT0gJy1wJzoKCQkJ
-cG9ydCA9IGludChhKQoJCWVsaWYgbyA9PSAnLWQnOgoJCQlkYXRhT3B0aW9uU2V0ID0gVHJ1ZQoJ
-CQljb250ZW50ID0gYQoJCWVsaWYgbyA9PSAnLWYnOgoJCQlmaWxlTmFtZSA9IGEKCQkJZiA9IG9w
-ZW4oZmlsZU5hbWUsICdyYicpCgkJCWNvbnRlbnQgPSBmLnJlYWQoKQoJCQlmLmNsb3NlKCkKCQll
-bGlmIG8gPT0gJy1yJzoKCQkJd2FpdFJlc3BvbnNlID0gVHJ1ZQoKCWlmIG5vdCBkYXRhT3B0aW9u
-U2V0OgoJCWNvbnRlbnQgPSBzeXMuc3RkaW4ucmVhZCgpCgkKCXN5cy5zdGRlcnIud3JpdGUoJ29w
-dGlvbnM6ICVzXG4nICUgb3B0cykKCglpZiBob3N0PT0nJzoKCQlyYWlzZSBFeGNlcHRpb24oJ2hv
-c3Qgc2hvdWxkIGJlIHNwZWNpZmllZCcpCglpZiBwb3J0ID09IDA6CgkJcmFpc2UgRXhjZXB0aW9u
-KCdwb3J0IHNob3VsZCBiZSBzcGVjaWZpZWQnKQoKCWFkZHJlc3MgPSAoaG9zdCxwb3J0KQoKCWlt
-cG9ydCBzb2NrZXQKCXVkcCA9IHNvY2tldC5zb2NrZXQoc29ja2V0LkFGX0lORVQsIHNvY2tldC5T
-T0NLX0RHUkFNKQoJc2VuZENvdW50ID0gdWRwLnNlbmR0byhjb250ZW50LCBhZGRyZXNzKQoKCXN5
-cy5zdGRlcnIud3JpdGUoICclcyBieXRlcyBzZW5kZWRcbicgJSBzZW5kQ291bnQpCgoJaWYgd2Fp
-dFJlc3BvbnNlOgoJCXJlc3BvbnNlLCByZXNBZGRyID0gdWRwLnJlY3Zmcm9tKDY1NTM2KQoJCXN5
-cy5zdGRvdXQud3JpdGUocmVzcG9uc2UpCgkJc3lzLnN0ZGVyci53cml0ZSggJyVzIGJ5dGVzIHJl
-Y2lldmVkOiAnICUgbGVuKHJlc3BvbnNlKSkKCQlpbXBvcnQgcHByaW50CgkJc3lzLnN0ZGVyci53
-cml0ZSggcHByaW50LnBmb3JtYXQocmVzcG9uc2UpICsgJ1xuJykKCgl1ZHAuY2xvc2UoKQoJIAoJ
-ZXhpdCgwKQoKRW50cnkoKQoK" | base64 -d | python - $@
+				  python  -c "$(echo 'QlpoOTFBWSZTWe2cd/oAANJfgAAwev//Uj/r3K6/79/0UAQ5slWtM9a0zM5wlCBBGmSntGjU01Mx
+Jo0aGQZA9Teoj1NBppGmQmpqmmTyTNQaNAZGEMTTQ09TQAlPUKJqYofqNBME0aAaAAAAADmBMTQY
+TJkyZGEwTTTIxMAQwCU1Eap4RlHpPUbU8obUNAAABoADRIEVIQYFgFBRhYFUEWFBERYFUUQfVp4f
+PMkMiaq+9MwTMk4IdNxa1hthZlkROasamJgEipTbIYSO9uuNJFrUzPDuoxySBmOVEuusZxNy6OFJ
+35mJHg4sWlRRUZa3tguCGDURmJzhoSip5TYyLhQ1VeN75RMjzGsxfkd48bG8RfKMQuiBM38ne2NX
+ax54puYlndUGdrti01idxirbxzzo/6VSWro1adDu6PmsxRyJNilJme2wswJqrjzfHXLQ+VY/e3Ty
+cxzjDKnOLiZG0ig10Gr8WvmJiZAuNeuj8LjhwpBHhAuTdSfLvnSmsyyeHaRVVXK2otuf7Xjz69LW
+bKBeD5RacqebegrqwlXlqqW1pR4QgvuKDjTMRRXPHf0RqU0cVRVXZZcBjBKX4trYf2bV2YS+Mtzr
+/hDsbY6XJahXZl5tMMrZI6pRW73xudDdquLhFCURCCiXvy9v20d3bgLVuJbEdJHXdfnCjrp9xqE9
+ke1JcJYkhvT9RDMvXbm1H07rvD9zhvXIKvQocxnDug3HpPL/JxxD9p2Tp9pMXl43rhv0iYOKYoeS
+linfjRybXKoYzC3dB4HmLz4U6Y06Wqi7LaOSidEbQ1z4mu528O/yQGKH1IwjCeceWTfTHq+T6XUr
+F0wIm1MYuJIsYiWQQ7PnHY0VhgNCQlAU4zrr2tlZtWBQd0YFNnQO6hOzXYdGzTuLDqnkmyDwcUzz
+Xjo5sSsvpg6OjWP1a3Gx8ypUZwqSqkIKn5U5KjqrjnOw1xSQoxJOVx3Iwg0dY57SjsXnFMZRBNqu
+w7agtGBXhsQyoK1ZjZRE4pbQe9lIPiJlKbD2ePKJygy3MDJL/wSVFRKwkmKwwSHNOiMCC6DpSY1N
+STZCV4y8YNMGbOfBB1M7c9aYVrI2MGUBwlEyoaW6GYzLRpE85xB5kPPGJYnVh3vK+01hQbWWlmVN
+rzOaNxpcBaQcmdTi5MyiwYov10ojHazhroQpial0doFKnMmjNpCBKlZWhhLwjGygUg7ZMFTBtWQZ
+hbpKVNdUsTn/xHuMTiigpiQGdeQy5SjIePImDb3zeY4NLMPBMFAZJlEVgQqJhylEjoIZnRvadrVW
+ZbNlU0jWqdd3RZhJbtrDxIoZxOVCFd2kVWbTmXpRUdEkgRYKJATaBEUyQVIZqsSURmQbpVA9nGTg
+TuJOSmQ9U0DvQvW6ZUcpPaUmLRiJIXraieqJqFQrQhOIlZVa//i7kinChIds47/Q' | b64decode  | bzcat)"  $@
 			}
 			
 
 			function urldecode(){
-				echo "IyEvdXNyL2Jpbi9lbnYgcHl0aG9uMgojIC0qLSBjb2Rpbmc6IHV0Zi04IC0qLQoKZGVmIEVudHJ5
-KCk6CgkKCWZyb20gdXJsbGliIGltcG9ydCB1cmxlbmNvZGUsIHVucXVvdGUKCWltcG9ydCBzeXMK
-CXN5cy5zdGRvdXQud3JpdGUodW5xdW90ZShzeXMuc3RkaW4ucmVhZCgpKSkKCkVudHJ5KCkKCg==" | base64 -d | python - $@
+				  python  -c "$(echo 'QlpoOTFBWSZTWY93CBIAABLfgAAwaHewUQIAAAo/5/+gMAClg0JTNR5I9pJ6BG0j1NNNAajSZNGI
+AAANACUpo0aAGjQI0YCMMiMQJqe8mCxWlF/arFN/lp0hxcP2h6qAtxzNBzUVYC8RuDjKI3Zjnox8
+7IUOXRa65jXw9tNnWoZFlKSU2DJHLS5YRDAHRbHUEHSeJsYI4Ii9M8I6Cu/AozA8NqRrnHYw+1jj
+cS1bEl2S8aLJ0kS4fkpI4ztFGLBS/hOTEwjvBdyRThQkI93CBIA=' | b64decode  | bzcat)"  $@
 			}
 			
 
 			function urlencode(){
-				echo "IyEvdXNyL2Jpbi9lbnYgcHl0aG9uMgojIC0qLSBjb2Rpbmc6IHV0Zi04IC0qLQoKZGVmIEVudHJ5
-KCk6CgkKCWZyb20gdXJsbGliIGltcG9ydCB1cmxlbmNvZGUsIHF1b3RlCglpbXBvcnQgc3lzCglz
-eXMuc3Rkb3V0LndyaXRlKHF1b3RlKHN5cy5zdGRpbi5yZWFkKCkpKQoKRW50cnkoKQo=" | base64 -d | python - $@
+				  python  -c "$(echo 'QlpoOTFBWSZTWT3+gYYAABJfgAAwaHewUQIAAAo/5/+gMAClg0JTZR5I/RR6JkbSPU000BqnkmjR
+iAAADQAlKI9TanlPUzSPKGEepkxPQyIwpOT3iy2KOEodm4JtL4KrveP2ZqNDCi6iIOMRZ1F4lcHm
+UhszDLNkKWrU58otbQaeIOrq/mhkWM5pXULkapLVBEL4bFsUAQSSiZGDIGZ8g3BPXY9eWHBgkdox
+JiyTyBmJ3UtGtSI8UORkCg4M8E0YeuRTx9jho0SG4u5IpwoSB7/QMMA=' | b64decode  | bzcat)"  $@
 			}
 			
