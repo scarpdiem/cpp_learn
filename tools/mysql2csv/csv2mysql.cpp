@@ -219,24 +219,24 @@ int main(int argc,char**argv){
 
 	std::map<std::string,std::string> args;
 	std::map<std::string,int> intArgs;
-	args["host"] = "127.0.0.1";
-	intArgs["port"] = 3306;
-	args["user"] = "root";
-	args["passwd"] = "";
-	args["charset"] = "utf8";
+	args["--host"] = "127.0.0.1";
+	intArgs["--port"] = 3306;
+	args["--user"] = "root";
+	args["--password"] = "";
+	args["--default-character-set"] = "utf8";
 
-	args["db"] = "";
-	args["execute"] = "";
+	args["--database"] = "";
+	args["--execute"] = "";
 	// If there's a warning after a query statement, the program threats it as
 	// error and terminated. This option is enabled by default.
-	intArgs["warning_as_error"] = 1; 
+	intArgs["--warning_as_error"] = 1; 
 	// intArgs["begin_row_index"] = 1;
 	// intArgs["transaction"] = 1;
 	// intArgs["ignore_error"] = 0;
 	
 	// args["null_cell_value"] = "NULL";
 	
-	args["input"] = "";
+	args["--input"] = "";
 
 
 	std::string errorMessage;
@@ -250,10 +250,10 @@ int main(int argc,char**argv){
 	// open input stream
 	std::istream* pStream = NULL;
 	std::ifstream file;
-	if(args["input"] != ""){
-		file.open(args["input"].c_str(),std::ifstream::binary);
+	if(args["--input"] != ""){
+		file.open(args["--input"].c_str(),std::ifstream::binary);
 		if(!file){
-			std::cerr<<"ERROR: cannot open file ["<<args["input"]<<"]";
+			std::cerr<<"ERROR: cannot open file ["<<args["--input"]<<"]";
 			return __LINE__;
 		}
 		pStream = &file;
@@ -322,12 +322,12 @@ int main(int argc,char**argv){
 	mysql_init(&mysql);
 
 	// connection
-	int charsetErr = mysql_options(&mysql,MYSQL_SET_CHARSET_NAME,args["charset"].c_str());
+	int charsetErr = mysql_options(&mysql,MYSQL_SET_CHARSET_NAME,args["--default-character-set"].c_str());
 	if(charsetErr){
 		std::cerr<<"ERROR : cannot set connection charset"<<mysql_error(&mysql)<<std::endl;
 		return __LINE__;
 	}
-	MYSQL* connectSuccess = mysql_real_connect(&mysql,args["host"].c_str(),args["user"].c_str(),args["passwd"].c_str(),args["db"].c_str(),intArgs["port"],NULL,0);
+	MYSQL* connectSuccess = mysql_real_connect(&mysql,args["--host"].c_str(),args["--user"].c_str(),args["--password"].c_str(),args["--database"].c_str(),intArgs["--port"],NULL,0);
 	if(connectSuccess==NULL){
 		std::cerr<<"ERROR : cannot connect to mysql: "<<mysql_error(&mysql)<<std::endl;
 		return __LINE__;
@@ -343,11 +343,11 @@ int main(int argc,char**argv){
 	std::vector<std::string> fieldList;
 	std::vector<MYSQL_BIND> params;
 	std::string statement;
-	if(args["execute"].length()==0){
+	if(args["--execute"].length()==0){
 		std::cerr<<"ERROR: parameter execute should not be empty."<<std::endl;
 		return __LINE__;
 	}
-	for(std::istringstream iss(args["execute"]);;){
+	for(std::istringstream iss(args["--execute"]);;){
 
 		char ch = iss.get();
 		if(iss.eof()){
@@ -367,7 +367,7 @@ int main(int argc,char**argv){
 		for(;;){
 			int fieldNameCh = iss.get();
 			if((fieldName.length()==0) && iss.eof()){
-				std::cerr<<"ERROR: execute["<<args["execute"]<<"] syntax error."<<std::endl;
+				std::cerr<<"ERROR: execute["<<args["--execute"]<<"] syntax error."<<std::endl;
 				return __LINE__;
 			}
 			if(iss.eof()) break;
@@ -453,7 +453,7 @@ int main(int argc,char**argv){
 		
 		// check warning
 		int warnings = mysql_warning_count(&mysql);
-		if(warnings&&intArgs["warning_as_error"]){
+		if(warnings&&intArgs["--warning_as_error"]){
 
 			std::cerr<<"ERROR: there's mysql warnings when executed at row "<< rowsExecuted + 1 + 1<<std::endl;
 

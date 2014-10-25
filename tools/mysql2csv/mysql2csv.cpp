@@ -112,18 +112,18 @@ int ProcessArgs(int i_argc, char ** i_argv, std::map<std::string,std::string>& i
 int main(int argc,char**argv){
 
 	std::map<std::string,std::string> args;
-	args["host"] = "127.0.0.1";
-	args["port"] = "3306";
-	args["user"] = "root";
-	args["passwd"] = "";
-	args["charset"] = "utf8";
+	args["--host"] = "127.0.0.1";
+	args["--port"] = "3306";
+	args["--user"] = "root";
+	args["--password"] = "";
+	args["--default-character-set"] = "utf8";
 
-	args["db"] = "";
-	args["execute"] = "";
+	args["--database"] = "";
+	args["--execute"] = "";
 	
-	args["null_cell_value"] = "NULL";
+	args["--null_cell_value"] = "NULL";
 	
-	args["output"] = "";
+	args["--output"] = "";
 	
 	std::string errorMessage;
 	int errorCode = ProcessArgs(argc,argv,args,errorMessage);
@@ -136,8 +136,8 @@ int main(int argc,char**argv){
 	// open output stream
 	std::ostream* pStream = NULL;
 	std::ofstream file;
-	if(args["output"] != ""){
-		file.open(args["output"].c_str(),std::ofstream::binary);
+	if(args["--output"] != ""){
+		file.open(args["--output"].c_str(),std::ofstream::binary);
 		pStream = &file;
 	}else{
 		pStream = &std::cout;
@@ -149,7 +149,7 @@ int main(int argc,char**argv){
 	MYSQL mysql;
 	mysql_init(&mysql);
 	int port = 0;
-	std::istringstream issPort(args["port"]);
+	std::istringstream issPort(args["--port"]);
 	issPort>>port;
 	if(issPort.fail()){
 		std::cerr<<"ERROR "<<": "<<"invalid parameter port, should be an integer."<<std::endl;
@@ -157,12 +157,12 @@ int main(int argc,char**argv){
 	}
 
 	// connection
-	int charsetErr = mysql_options(&mysql,MYSQL_SET_CHARSET_NAME,args["charset"].c_str());
+	int charsetErr = mysql_options(&mysql,MYSQL_SET_CHARSET_NAME,args["--default-character-set"].c_str());
 	if(charsetErr){
 		std::cerr<<"ERROR : cannot set connection charset"<<std::endl;
 		return __LINE__;
 	}
-	MYSQL* connectSuccess = mysql_real_connect(&mysql,args["host"].c_str(),args["user"].c_str(),args["passwd"].c_str(),args["db"].c_str(),port,NULL,0);
+	MYSQL* connectSuccess = mysql_real_connect(&mysql,args["--host"].c_str(),args["--user"].c_str(),args["--password"].c_str(),args["--database"].c_str(),port,NULL,0);
 	if(connectSuccess==NULL){
 		std::cerr<<"ERROR : cannot connect to mysql: "<<mysql_error(&mysql)<<std::endl;
 		return __LINE__;
@@ -174,7 +174,7 @@ int main(int argc,char**argv){
 	}mysqlCloser(&mysql);
 	(void)mysqlCloser; // suppress warning
 
-	std::string sql = args["execute"];
+	std::string sql = args["--execute"];
 	if( sql == ""){
 		std::cerr<<"ERROR "<<": "<<"The statement to be execute cannot be empty, please set the execute parameter"<<std::endl;
 		return __LINE__;
@@ -206,6 +206,7 @@ int main(int argc,char**argv){
 	// write header
 	writer.WriteRow(header);
 
+	size_t rowsCount = 0;
 	for(MYSQL_ROW row = mysql_fetch_row(result); row!=NULL; row = mysql_fetch_row(result)){
 		std::vector<std::string> csvRow;
 		unsigned long *lengths = mysql_fetch_lengths(result);
@@ -214,11 +215,14 @@ int main(int argc,char**argv){
 				csvRow.push_back(std::string(row[i]));
 			}else{
 				// null value
-				csvRow.push_back(args["null_cell_value"]);
+				csvRow.push_back(args["--null_cell_value"]);
 			}
 		}
 		writer.WriteRow(csvRow);
+		++rowsCount;
 	}
+
+	std::clog<<rowsCount<<" rows written."<<std::endl;
 	
 	file.close();
 	return 0;
