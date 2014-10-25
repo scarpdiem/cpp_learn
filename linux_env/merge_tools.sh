@@ -11,6 +11,8 @@ function Entry(){
 
 	echo '#!/bin/bash' 
 
+	# merge simple modules first, more complicated modules
+	# may be depended on these modules
 	for moduleDir in $moduleDirs ; do
 		# simple modules 
 		if [[ ! -f $moduleDir/merge_tools.sh ]] ; then

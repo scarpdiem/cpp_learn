@@ -3,7 +3,7 @@
 
 def Entry():
 	
-	from urllib import urlencode, quote
+	from urllib import quote
 	import sys
 	if len(sys.argv)>1:
 		sys.stdout.write(quote(sys.argv[1]))

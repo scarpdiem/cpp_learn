@@ -1,52 +1,4 @@
 #!/bin/bash
-#!/bin/bash
-
-
-function scpex(){
-
-        read -p "password: " password
-
-        local expectCmd='
-
-        set timeout 10
-
-        spawn scp '"$@"'
-        expect {
-                "*yes/no" { send "yes\r" }
-                "*password" {
-                        send "'"$password"'\r"
-                        exp_continue
-                }
-        }
-        '
-
-        expect -c "$expectCmd"
-
-}
-
-#/bin/bash
-
-set -o emacs
-
-# set editing-mode vi
-# bind -m vi-insert “\C-l”:clear-screen
-
-function cdl(){
-	if [[ -L "$1" ]]
-	then
-		local absPath="$(readlink -f $1)"
-		if [[ -f $absPath ]]
-		then
-			cd $(dirname $absPath)
-		else
-			cd $absPath
-		fi
-	else
-		cd `readlink -f $1` 
-	fi
-}
-
-
 # for ctags
 #   for example: make_print_include_path_for_ctags make all
 # author: roxma
@@ -101,6 +53,52 @@ function make_print_include_path_for_ctags(){
 	done | xargs -n1 | sort -u | xargs # remove duplicate words
 
 	export LC_ALL="$lcAllBackup"
+}
+#!/bin/bash
+
+
+function scpex(){
+
+        read -p "password: " password
+
+        local expectCmd='
+
+        set timeout 10
+
+        spawn scp '"$@"'
+        expect {
+                "*yes/no" { send "yes\r" }
+                "*password" {
+                        send "'"$password"'\r"
+                        exp_continue
+                }
+        }
+        '
+
+        expect -c "$expectCmd"
+
+}
+
+#/bin/bash
+
+set -o emacs
+
+# set editing-mode vi
+# bind -m vi-insert “\C-l”:clear-screen
+
+function cdl(){
+	if [[ -L "$1" ]]
+	then
+		local absPath="$(readlink -f $1)"
+		if [[ -f $absPath ]]
+		then
+			cd $(dirname $absPath)
+		else
+			cd $absPath
+		fi
+	else
+		cd `readlink -f $1` 
+	fi
 }
 
 function udpsend(){

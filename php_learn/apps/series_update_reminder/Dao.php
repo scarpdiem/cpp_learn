@@ -8,7 +8,7 @@ class Dao{
 	private $db = NULL;
 	
 	function __construct(){
-		$this->db = new Db(PhpLearnDbConfig());
+		$this->db = new DbMysql(PhpLearnDbConfig());
 	}
 	
 	function SetConfig($name, $value){

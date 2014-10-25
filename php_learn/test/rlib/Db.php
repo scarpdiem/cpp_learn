@@ -2,112 +2,100 @@
 
 require_once '../../libs/rlib/Db.php';
 
-$config = new DbConfig();
-$config->userName = "root";
-$config->password = "";
-$config->charset = "utf-8";
-$config->useDatabase = "rlib_test";
+function Entry(){
 
-$db = new Db($config);
+	$config = new DbConfig();
+	$config->userName = "root";
+	$config->password = "";
+	$config->charset = "utf8";
+	$config->useDatabase = "php_learn";
 
-$db->Execute("create table test(uin bigint primary key, content varchar(1024) not null default '')");
-$db->Execute("delete from test");
+	$db = new DbMysql($config);
 
-$result = $db->Execute("insert into test (uin,content) values(1,1),(2,2),(3,3)");
-if($result->affectedRows!=3){
-	die("insertRows=$insertRows, ". $db->GetLastError());
+	$initialRows = array( array("id"=>1, "message"=>"Hello 1") , array("id"=>2, "message"=>"Hello 2") , array("id"=>3, "message"=>"Hello 3"));
+
+	ResetTable($db, $initialRows);
+
+	$result = $db->Execute("select * from db_test");
+	if($result->errorCode || (count($result->selectResult)!=count($initialRows))){
+		die("select fail");
+	}
+
+	// ussage 2
+	$query= array();
+	$query[] = "  id=";
+	$query[] = DbWrapStr( $initialRows[0]["id"]);
+	$result = $db->Execute( "select * from db_test where ", $query);
+	if($result->errorCode || (count($result->selectResult)!=1) || ($result->selectResult[0]["message"] != $initialRows[0]["message"])){
+		die("select fail" );
+	}
+
+	echo "test ok!\n";
 }
 
 
-$query= array();
-$query[] = "  uin=";
-$query[] = DbWrapStr("3");
-$result = $db->Execute( "select * from test where ", $query, " or uin=", DbEscape("1"));
+function ResetTable($db, $initialRows){
+	
+	$result = $db->Execute("drop table if exists db_test");
+	if($result->errorCode){
+		die("drop table fail, errorCode=".$result->errorCode.", errorMessage=".$result->errorMessage);
+	}
 
-if($result->affectedRows!=2){
-	die("selectRows=" . $result->affectedRows);
-}
-var_dump($result);
+	$result = $db->Execute("create table db_test(id bigint primary key, message varchar(1024) not null default '')engine=Innodb, charset=utf8");
+	if($result->errorCode){
+		die("create table fail");
+	}
 
+	// rollback test
+	$result = $db->Begin();
+	if($result->errorCode){
+		var_dump($result);
+		die("begin transaction error.");
+	}
 
-echo "transaction test begin...\n";
+	foreach($initialRows as $row){
+		$result = $db->Execute("insert into db_test "
+			, " set id=", DbWrapStr($row["id"])
+			, ", message=", DbWrapStr($row["message"])
+		);
+		if( $result->errorCode || ($result->affectedRows!=1)){
+			die( "error: ". $db->GetLastError(). ", sql:". $result->statement);
+		}
+	}
 
-echo "transaction test 1 ... \n";
-
-$result = $db->Execute("delete from test");
-if($result->affectedRows!=3){
-	die("deleteRows=" . $result->affectedRows);
-}
-
-$result = $db->Begin();
-if($result->errorCode){
-	var_dump($result);
-	die("begin transaction error.");
-}
-
-$result = $db->Execute("insert into test (uin,content) values(1,1),(2,2),(3,3)");
-if($result->affectedRows!=3){
-	die("insertRows=$insertRows, ". $db->GetLastError());
-}
-
-$result = $db->Commit();
-if($result->errorCode){
-	var_dump($result);
-	die("commit error.");
-}
-
-$result = $db->Execute("select * from test");
-if($result->affectedRows!=3){
-	var_dump($result);
-	die("select error, transaction test failed.");
-}
-
-echo "transaction test 1 done.\n";
+	$result = $db->RollBack();
+	if($result->errorCode){
+		var_dump($result);
+		die("rollback error.");
+	}
 
 
-echo "transaction test 2 ... \n";
+	// commit test
+	$result = $db->Begin();
+	if($result->errorCode){
+		var_dump($result);
+		die("begin transaction error.");
+	}
 
-$result = $db->Execute("delete from test");
-if($result->affectedRows!=3){
-	die("deleteRows=" . $result->affectedRows);
-}
+	foreach($initialRows as $row){
+		$result = $db->Execute("insert into db_test "
+			, " set id=", DbWrapStr($row["id"])
+			, ", message=", DbWrapStr($row["message"])
+		);
+		if( $result->errorCode || ($result->affectedRows!=1)){
+			die( "error: ". $db->GetLastError(). ", sql:". $result->statement);
+		}
+	}
+	
+	$result = $db->Commit();
+	if($result->errorCode){
+		var_dump($result);
+		die("commit error.");
+	}
 
-$result = $db->Begin();
-if($result->errorCode){
-	var_dump($result);
-	die("begin transaction error.");
-}
-
-$result = $db->Execute("insert into test (uin,content) values(1,1),(2,2),(3,3)");
-if($result->affectedRows!=3){
-	die("insertRows=$insertRows, ". $db->GetLastError());
 }
 
-$result = $db->RollBack();
-if($result->errorCode){
-	var_dump($result);
-	die("commit error.");
-}
-
-$result = $db->Execute("select * from test");
-if($result->affectedRows!=0){
-	var_dump($result);
-	die("select error, transaction test failed.");
-}
-
-echo "transaction test 2 done.\n";
-
-$result = $db->Execute("insert into test (uin,content) values(1,1),(2,2),(3,3)");
-if($result->affectedRows!=3){
-	die("insertRows=$insertRows, ". $db->GetLastError());
-}
-$result = $db->Execute("select * from test");
-if($result->affectedRows!=3){
-	var_dump($result);
-	die("select error, transaction test failed.");
-}
-
-
-echo "test done.\n";
+Entry();
+exit(0);
 
 ?>
