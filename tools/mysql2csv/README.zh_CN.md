@@ -19,89 +19,6 @@ g++ csv2mysql.cpp -ocsv2mysql -g -L/usr/lib64/mysql/  -lmysqlclient
 ```
 
 
-## 演示
-
-首先，创建一个测试用的数据库，建立初始的数据：
-
-    [roxma@VM_6_207_centos mysql2csv]$ mysql -uroot --password="" --default-character-set=utf8
-    ...
-
-    mysql> create database csv_test default charset=utf8;
-    Query OK, 1 row affected (0.02 sec)
-
-    mysql> use csv_test;
-    Database changed
-    mysql> create table test(id int primary key, value1 varchar(1024))engine=innodb;
-    Query OK, 0 rows affected (0.08 sec)
-
-    mysql> show create table test \G
-    *************************** 1. row ***************************
-           Table: test
-    Create Table: CREATE TABLE `test` (
-      `id` int(11) NOT NULL,
-      `value1` varchar(1024) DEFAULT NULL,
-      PRIMARY KEY (`id`)
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8
-    1 row in set (0.00 sec)
-
-    mysql> insert into test (id,value1) values(1,"hello"),(2, 'comma , double quotes " '),(3,NULL);
-    Query OK, 3 rows affected (0.00 sec)
-    Records: 3  Duplicates: 0  Warnings: 0
-
-    mysql> select * from test;
-    +----+--------------------------+
-    | id | value1                   |
-    +----+--------------------------+
-    |  1 | hello                    |
-    |  2 | comma , double quotes "  |
-    |  3 | NULL                     |
-    +----+--------------------------+
-    3 rows in set (0.00 sec)
-
-
-导出 MySQL 的数据到 .csv 文件：
-
-    [roxma@VM_6_207_centos mysql2csv]$ ./mysql2csv host="127.0.0.1" port="3306"  db="csv_test" user="root" passwd="" charset="utf8" execute="select * from test" > data.csv
-    host=127.0.0.1
-    port=3306
-    db=csv_test
-    user=root
-    passwd=
-    charset=utf8
-    execute=select * from test
-
-    [roxma@VM_6_207_centos mysql2csv]$ cat data.csv
-    id,value1
-    1,hello
-    2,"comma , double quotes "" "
-    3,NULL
-
-导入 .csv 文件的数据到 MySQL：
-
-    [roxma@VM_6_207_centos mysql2csv]$ ./csv2mysql host="127.0.0.1" port="3306" db="csv_test" user="root" passwd="" charset="utf8" execute="insert into test set id=?id+3, value1=?value1" input="data.csv"
-    host=127.0.0.1
-    port=3306
-    db=csv_test
-    user=root
-    passwd=
-    charset=utf8
-    execute=insert into test set id=?id+3, value1=?value1
-    input=data.csv
-    3 rows executed.
-
-    [roxma@VM_6_207_centos mysql2csv]$ mysql -uroot --password="" --default-character-set=utf8 --database="csv_test"  -e"select * from test"
-    +----+--------------------------+
-    | id | value1                   |
-    +----+--------------------------+
-    |  1 | hello                    |
-    |  2 | comma , double quotes "  |
-    |  3 | NULL                     |
-    |  4 | hello                    |
-    |  5 | comma , double quotes "  |
-    |  6 | NULL                     |
-    +----+--------------------------+
-
-
 
 ## 支持的工具选项
 
@@ -120,22 +37,22 @@ g++ csv2mysql.cpp -ocsv2mysql -g -L/usr/lib64/mysql/  -lmysqlclient
 
     <tbody>
         <tr>
-            <td>host</td> <td>MySQL server 的机器名</td> <td>127.0.0.1</td>
+            <td>--host</td> <td>MySQL server 的机器名</td> <td>127.0.0.1</td>
         </tr>
         <tr>
-            <td>port</td> <td>MySQL 连接的目标端口</td> <td>3306</td>
+            <td>--port</td> <td>MySQL 连接的目标端口</td> <td>3306</td>
         </tr>
         <tr>
-            <td>user</td> <td>MySQL 用户名</td> <td>root</td>
+            <td>--user</td> <td>MySQL 用户名</td> <td>root</td>
         </tr>
         <tr>
-            <td>passwd</td> <td>MySQL 用户的密码</td> <td></td>
+            <td>--password</td> <td>MySQL 用户的密码</td> <td></td>
         </tr>
         <tr>
-            <td>charset</td> <td>MySQL 连续使用的字符编码</td> <td>utf8</td>
+            <td>--default-character-set</td> <td>MySQL 连续使用的字符编码</td> <td>utf8</td>
         </tr>
         <tr>
-            <td>db</td> <td>使用的 MySQL 数据库名。相当于 use db 命令。</td> <td></td>
+            <td>--database</td> <td>使用的 MySQL 数据库名。相当于 use db 命令。</td> <td></td>
         </tr>
     </tbody>
 
@@ -146,13 +63,13 @@ g++ csv2mysql.cpp -ocsv2mysql -g -L/usr/lib64/mysql/  -lmysqlclient
     </thread>
     <tbody>
         <tr>
-            <td>execute</td> <td>需要执行的 MySQL 查询命令</td> <td></td>
+            <td>--execute</td> <td>需要执行的 MySQL 查询命令</td> <td></td>
         </tr>
         <tr>
-            <td>null_cell_value</td> <td>当对应的值NULL时，使用这个字符串替换到表格中。</td> <td>NULL</td>
+            <td>--null_cell_value</td> <td>当对应的值NULL时，使用这个字符串替换到表格中。</td> <td>NULL</td>
         </tr>
         <tr>
-            <td>output</td> <td>生成的 csv 文件的文件名。如果这个选项为空，则文件 的内容会被输出到 stdout。</td> <td></td>
+            <td>--output</td> <td>生成的 csv 文件的文件名。如果这个选项为空，则文件 的内容会被输出到 stdout。</td> <td></td>
         </tr>
     </tbody>
 
@@ -163,13 +80,13 @@ g++ csv2mysql.cpp -ocsv2mysql -g -L/usr/lib64/mysql/  -lmysqlclient
     </thread>
     <tbody>
         <tr>
-            <td>execute</td> <td>需要执行的 MySQL 指令</td> <td></td>
+            <td>--execute</td> <td>需要执行的 MySQL 指令</td> <td></td>
         </tr>
         <tr>
-            <td>warning_as_error</td> <td>如果为个选项为1，那么在执行 MySQL 语句的过程中如果出现任何 warning，都会被视为错误，程序直接终止退出。</td> <td>1</td>
+            <td>--warning_as_error</td> <td>如果为个选项为1，那么在执行 MySQL 语句的过程中如果出现任何 warning，都会被视为错误，程序直接终止退出。</td> <td>1</td>
         </tr>
         <tr>
-            <td>input</td> <td>输入的 csv 文件的文件名。如果这个选项为空，则程序从 stdin 中读取数据。</td> <td></td>
+            <td>--input</td> <td>输入的 csv 文件的文件名。如果这个选项为空，则程序从 stdin 中读取数据。</td> <td></td>
         </tr>
     </tbody>
 

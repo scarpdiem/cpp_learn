@@ -19,89 +19,6 @@ g++ csv2mysql.cpp -ocsv2mysql -g -L/usr/lib64/mysql/  -lmysqlclient
 ```
 
 
-## Demo
-
-Create a database and a simple table named "test".
-
-    [roxma@VM_6_207_centos mysql2csv]$ mysql -uroot --password="" --default-character-set=utf8
-    ...
-    
-    mysql> create database csv_test default charset=utf8;
-    Query OK, 1 row affected (0.02 sec)
-    
-    mysql> use csv_test;
-    Database changed
-    mysql> create table test(id int primary key, value1 varchar(1024))engine=innodb;
-    Query OK, 0 rows affected (0.08 sec)
-    
-    mysql> show create table test \G
-    *************************** 1. row ***************************
-           Table: test
-    Create Table: CREATE TABLE `test` (
-      `id` int(11) NOT NULL,
-      `value1` varchar(1024) DEFAULT NULL,
-      PRIMARY KEY (`id`)
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8
-    1 row in set (0.00 sec)
-    
-    mysql> insert into test (id,value1) values(1,"hello"),(2, 'comma , double quotes " '),(3,NULL);
-    Query OK, 3 rows affected (0.00 sec)
-    Records: 3  Duplicates: 0  Warnings: 0
-    
-    mysql> select * from test;
-    +----+--------------------------+
-    | id | value1                   |
-    +----+--------------------------+
-    |  1 | hello                    |
-    |  2 | comma , double quotes "  |
-    |  3 | NULL                     |
-    +----+--------------------------+
-    3 rows in set (0.00 sec)
-
-
-Export the table into csv file:
-
-    [roxma@VM_6_207_centos mysql2csv]$ ./mysql2csv host="127.0.0.1" port="3306"  db="csv_test" user="root" passwd="" charset="utf8" execute="select * from test" > data.csv
-    host=127.0.0.1
-    port=3306
-    db=csv_test
-    user=root
-    passwd=
-    charset=utf8
-    execute=select * from test
-    
-    [roxma@VM_6_207_centos mysql2csv]$ cat data.csv
-    id,value1
-    1,hello
-    2,"comma , double quotes "" "
-    3,NULL
-
-Import the data from csv file into Mysql database:
-
-    [roxma@VM_6_207_centos mysql2csv]$ ./csv2mysql host="127.0.0.1" port="3306" db="csv_test" user="root" passwd="" charset="utf8" execute="insert into test set id=?id+3, value1=?value1" input="data.csv"
-    host=127.0.0.1
-    port=3306
-    db=csv_test
-    user=root
-    passwd=
-    charset=utf8
-    execute=insert into test set id=?id+3, value1=?value1
-    input=data.csv
-    3 rows executed.
-
-    [roxma@VM_6_207_centos mysql2csv]$ mysql -uroot --password="" --default-character-set=utf8 --database="csv_test"  -e"select * from test"
-    +----+--------------------------+
-    | id | value1                   |
-    +----+--------------------------+
-    |  1 | hello                    |
-    |  2 | comma , double quotes "  |
-    |  3 | NULL                     |
-    |  4 | hello                    |
-    |  5 | comma , double quotes "  |
-    |  6 | NULL                     |
-    +----+--------------------------+
-
-
 
 ## Supported Options
 
@@ -120,22 +37,22 @@ Import the data from csv file into Mysql database:
     
     <tbody>
         <tr>
-            <td>host</td> <td>The host name for MySQL server</td> <td>127.0.0.1</td>
+            <td>--host</td> <td>The host name for MySQL server</td> <td>127.0.0.1</td>
         </tr>
         <tr>
-            <td>port</td> <td>The destination port for MySQL connection</td> <td>3306</td>
+            <td>--port</td> <td>The destination port for MySQL connection</td> <td>3306</td>
         </tr>
         <tr>
-            <td>user</td> <td>MySQL user name</td> <td>root</td>
+            <td>--user</td> <td>MySQL user name</td> <td>root</td>
         </tr>
         <tr>
-            <td>passwd</td> <td>The password of the MySQL user</td> <td></td>
+            <td>--passwd</td> <td>The password of the MySQL user</td> <td></td>
         </tr>
         <tr>
-            <td>charset</td> <td>The character set of the MySQL connection</td> <td>utf8</td>
+            <td>--default-character-set</td> <td>The character set of the MySQL connection</td> <td>utf8</td>
         </tr>
         <tr>
-            <td>db</td> <td>The database to use</td> <td></td>
+            <td>--database</td> <td>The database to use</td> <td></td>
         </tr>
     </tbody>
 
@@ -146,13 +63,13 @@ Import the data from csv file into Mysql database:
     </thread>
     <tbody>
         <tr>
-            <td>execute</td> <td>The query statement</td> <td></td>
+            <td>--execute</td> <td>The query statement</td> <td></td>
         </tr>
         <tr>
-            <td>null_cell_value</td> <td>The string to be used when the value of a column is NULL.</td> <td>NULL</td>
+            <td>--null_cell_value</td> <td>The string to be used when the value of a column is NULL.</td> <td>NULL</td>
         </tr>
         <tr>
-            <td>output</td> <td>The name of the output csv file. If this option is empty, the data of the csv file will be passed to stdout.</td> <td></td>
+            <td>--output</td> <td>The name of the output csv file. If this option is empty, the data of the csv file will be passed to stdout.</td> <td></td>
         </tr>
     </tbody>
     
@@ -163,13 +80,13 @@ Import the data from csv file into Mysql database:
     </thread>
     <tbody>
         <tr>
-            <td>execute</td> <td>The update statement</td> <td></td>
+            <td>--execute</td> <td>The update statement</td> <td></td>
         </tr>
         <tr>
-            <td>warning_as_error</td> <td>If this optioin is set to 1, then if there's any warning when execute the statement, the program treats it as an error and terminate directly.</td> <td>1</td>
+            <td>--warning_as_error</td> <td>If this optioin is set to 1, then if there is any warning when execute the statement, the program treats it as an error and terminate directly.</td> <td>1</td>
         </tr>
         <tr>
-            <td>input</td> <td>The name of the input csv file. If this option is empty, the data of the csv file will be read from stdin.</td> <td></td>
+            <td>--input</td> <td>The name of the input csv file. If this option is empty, the data of the csv file will be read from stdin.</td> <td></td>
         </tr>
     </tbody>
     
