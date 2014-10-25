@@ -8,7 +8,7 @@ class AppointmentDao{
 	private $db = NULL;
 	
 	function __construct(){
-		$this->db = new Db(PhpLearnDbConfig());
+		$this->db = new MysqlDb(PhpLearnDbConfig());
 	}
 	
 	function CreateIssue(AppointmentDaoCreateIssueInput $input, AppointmentDaoCreateIssueOutput $output){
@@ -295,4 +295,4 @@ class AppointmentDaoValidateOutput{
 	public $errorMessage = "";
 };
 
-?>
+>?
