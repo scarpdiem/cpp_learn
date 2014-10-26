@@ -1,6 +1,6 @@
 <?php
 
-require_once '../../libs/rlib/Db.php';
+require_once '../../libs/rlib/DbMysql.php';
 
 function Entry(){
 

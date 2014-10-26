@@ -2,6 +2,11 @@
 
 require_once dirname(__FILE__) . "/" . 'Db.php';
 
+if(defined('E_DEPRECATED'))
+	error_reporting(E_ALL & ~E_NOTICE^E_DEPRECATED);
+else    
+	error_reporting(E_ALL & ~E_NOTICE);
+
 class DbMysql{
 	
 	private $dbConfig;
