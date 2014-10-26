@@ -2,7 +2,7 @@
 
 require_once dirname(__FILE__) . "/" . 'Db.php';
 
-class DbMysql{
+class DbMysqli{
 	
 	private $dbConfig;
 	
@@ -24,46 +24,33 @@ class DbMysql{
 		$result = new DbResult();
 		
 		if($this->mysqlLink == NULL){
-
-			$this->mysqlLink = mysql_connect(
-							  $this->dbConfig->host . ":" . $this->dbConfig->port
+			$this->mysqlLink = new mysqli(
+							  $this->dbConfig->host
 							, $this->dbConfig->userName
 							, $this->dbConfig->password
+							, $this->dbConfig->useDatabase
+							, $this->dbConfig->port
 						);
-			if( ! $this->mysqlLink ){
+			if($this->mysqlLink->connect_errno){
 				
 				$result->errorCode = __LINE__;
 				$result->errorMessage = "[" . __FILE__ . "]:[" . __FUNCTION__ . "]: "
-							. 'Could not connect: ' . mysql_error($this->mysqlLink);
+							. 'Could not connect: ' . $this->mysqlLink->connect_error;
 				
-				mysql_close($this->mysqlLink);
+				$this->mysqlLink->close();
 				$this->mysqlLink = NULL;
 				
 				return $result;
 			}
-
-			if( $this->dbConfig->useDatabase != "" ){
-				$selectDb = mysql_select_db($this->dbConfig->useDatabase, $this->mysqlLink);
-				if( !$selectDb ){
-					$result->errorCode = __LINE__;
-					$result->errorMessage = "[" . __FILE__ . "]:[" . __FUNCTION__ . "]: "
-								. 'Choose database fail: ' . mysql_error($this->mysqlLink);
-					
-					mysql_close($this->mysqlLink);
-					$this->mysqlLink = NULL;
-					
-					return $result;
-				}
-			}
 			
-			$setCharset = mysql_set_charset ($this->dbConfig->charset, $this->mysqlLink);
+			$setCharset = $this->mysqlLink->set_charset($this->dbConfig->charset);
 			if(!$setCharset){
 				$result->errorCode = __LINE__;
 				$result->errorMessage = "[" . __FILE__ . "]:[" . __FUNCTION__ . "]: "
 							. 'Could not set charset to ' .  $this->dbConfig->charset 
-							. ", error: " . mysql_error($this->mysqlLink);
+							. ", error: " . $this->mysqlLink->error;
 				
-				mysql_close($this->mysqlLink);
+				$this->mysqlLink->close();
 				$this->mysqlLink = NULL;
 				
 				return $result;
@@ -81,18 +68,18 @@ class DbMysql{
 	 */
 	public function Reset(){
 		if($this->mysqlLink){
-			mysql_close($this->mysqlLink);
+			$this->mysqlLink->close();
 			$this->mysqlLink = NULL;
 		}
 	}
 	
 	public function GetLastError(){
-		return mysql_error($this->mysqlLink);
+		return $this->mysqlLink->error;
 	}
 
 	private function QueryStatementAppend(& $query, $append){
 		if($append instanceof DbWrapStringHelper){
-			$query = $query . '"' . mysql_real_escape_string( $append->value, $this->mysqlLink ) . '"';
+			$query = $query . '"' . $this->mysqlLink->real_escape_string( $append->value ) . '"';
 		}else if(is_array($append)){
 			foreach ($append as $item){
 				$this->QueryStatementAppend($query, $item);
@@ -136,24 +123,30 @@ class DbMysql{
 		
 		$result->statement = $query;
 		
-		$queryResult = mysql_query($query, $this->mysqlLink);
+		$queryResult = $this->mysqlLink->query($query);
 		
 		if($queryResult==FALSE){
 			$result->errorCode = __LINE__;
 			$result->errorMessage = "[" . __FILE__ . "]:[" . __FUNCTION__ . "]: "
-					. "query error[" . mysql_errno($this->mysqlLink) . "] " . mysql_error($this->mysqlLink);
+					. "query error[" . $this->mysqlLink->errno . "] " . $this->mysqlLink->error;
 			return $result;
 		}
 		
 
-		$result->affectedRows = mysql_affected_rows($this->mysqlLink);
+		$result->affectedRows = $this->mysqlLink->affected_rows;
 	
-		// fill $result->selectResult
-		if( is_resource($queryResult) ){
-			while ($row = mysql_fetch_assoc($queryResult)){
+		
+		if($queryResult instanceof mysqli_result){
+
+			$num_rows = $queryResult->num_rows;
+	
+			while($row = $queryResult->fetch_array(MYSQLI_ASSOC)){
 				$result->selectResult[] = $row;
 			}
-			mysql_free_result($queryResult);
+			
+			$queryResult->free();
+			
+			return $result;
 		}
 		
 		return $result;

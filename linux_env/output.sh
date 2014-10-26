@@ -143,10 +143,10 @@ AAANACUpo0aAGjQI0YCMMiMQJqe8mCxWlF/arFN/lp0hxcP2h6qAtxzNBzUVYC8RuDjKI3Zjnox8
 cS1bEl2S8aLJ0kS4fkpI4ztFGLBS/hOTEwjvBdyRThQkI93CBIA=' | b64decode | bzcat`"  $@
 }
 function urlencode(){
-python  -c "`echo 'QlpoOTFBWSZTWT3+gYYAABJfgAAwaHewUQIAAAo/5/+gMAClg0JTZR5I/RR6JkbSPU000BqnkmjR
-iAAADQAlKI9TanlPUzSPKGEepkxPQyIwpOT3iy2KOEodm4JtL4KrveP2ZqNDCi6iIOMRZ1F4lcHm
-UhszDLNkKWrU58otbQaeIOrq/mhkWM5pXULkapLVBEL4bFsUAQSSiZGDIGZ8g3BPXY9eWHBgkdox
-JiyTyBmJ3UtGtSI8UORkCg4M8E0YeuRTx9jho0SG4u5IpwoSB7/QMMA=' | b64decode | bzcat`"  $@
+python  -c "`echo 'QlpoOTFBWSZTWasC4oYAABHfgAAwaHOwUQIAAAo/5/+gMAC6mISaPU00aMmQDQ0NAMZNMgZNDIMj
+TAjBKEgMjSGCaA0wjRURSKTtr1dCxpzlDKbFvu5nGek48rE0UiXeGYqsMAuBbgSYWB4fDTU6Xrsg
+Z1ayJ4c7FBDImEWtyhFKqkTW0Dp5K1p9rMSStTU8ZRl0Hay7bn5IGxUZluGBwUZ8y81EuloSEEwO
+ZKVo+8Uc/E4R+Uw0norIEBL6C7kinChIVYFxQwA=' | b64decode | bzcat`"  $@
 }
 function getRoxVimrcFile(){
 
@@ -158,10 +158,9 @@ IDxTLWg+IDp0YWJOPEVudGVyPgoKIiBmaWxlIHRhYiBoaWdobGlnaHRpbmcKaGkgVGFiTGluZVNl
 bCAgICAgIHRlcm09Ym9sZCBjdGVybT1ib2xkCmhpIFRhYkxpbmUgICAgICAgICB0ZXJtPXVuZGVy
 bGluZSBjdGVybT11bmRlcmxpbmUgY3Rlcm1mZz0wIGN0ZXJtYmc9NwpoaSBUYWJMaW5lRmlsbCAg
 ICAgdGVybT1yZXZlcnNlIGN0ZXJtPXJldmVyc2UKCiIgZm9sZGluZwpzZXQgZm9sZGVuYWJsZQpz
-ZXQgZm9sZG1ldGhvZD1zeW50YXgKc2V0IGZvbGRsZXZlbD0xMDAKIiBhdXRvY21kIEJ1Zk5ld0Zp
-bGUsQnVmUmVhZCAqLmNwcCwqLmMsKi5oLCouaHBwICBzZXQgZm9sZG1ldGhvZD1zeW50YXgKCiIg
-aW5kZW50YXRpb24Kc2V0IHRhYnN0b3A9NApzZXQgc29mdHRhYnN0b3A9NApzZXQgc2hpZnR3aWR0
-aD00CnNldCBub2V4cGFuZHRhYgoKaW1hcCA8Qy1WPiA8RXNjPmxwCgo=' | b64decode > $roxVimrcFile
+ZXQgZm9sZG1ldGhvZD1zeW50YXgKc2V0IGZvbGRsZXZlbD0xMDAKCiIgaW5kZW50YXRpb24Kc2V0
+IHRhYnN0b3A9NApzZXQgc29mdHRhYnN0b3A9NApzZXQgc2hpZnR3aWR0aD00CnNldCBub2V4cGFu
+ZHRhYgoKCg==' | b64decode > $roxVimrcFile
 echo "$roxVimrcFile"
 }
 {
@@ -169,7 +168,7 @@ echo "$roxVimrcFile"
 
 # vim 
 unalias vim 2>/dev/null
-alias vim="$(which vim | awk '{print $NF}') -S \"$(getRoxVimrcFile)\""
+alias vim="$(which vim | awk '{print $NF}') -c \"source $(getRoxVimrcFile)\" -p"
 
 # ctags
 unalias ctags 2>/dev/null

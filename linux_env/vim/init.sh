@@ -2,7 +2,7 @@
 
 # vim 
 unalias vim 2>/dev/null
-alias vim="$(which vim | awk '{print $NF}') -S \"$(getRoxVimrcFile)\""
+alias vim="$(which vim | awk '{print $NF}') -c \"source $(getRoxVimrcFile)\" -p"
 
 # ctags
 unalias ctags 2>/dev/null

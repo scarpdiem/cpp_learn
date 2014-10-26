@@ -59,5 +59,6 @@ class DbResult{
 
 
 require_once dirname(__FILE__) . "/" . 'DbMysql.php';
+require_once dirname(__FILE__) . "/" . 'DbMysqli.php';
 
 ?>
