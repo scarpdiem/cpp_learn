@@ -3,4 +3,4 @@ all:
 	g++ csv2mysql.cpp -ocsv2mysql -g -L/usr/lib64/mysql/  -lmysqlclient
 
 clean:
-	rm -f mysql2csv, csv2mysql, output.csv
+	rm -f mysql2csv  csv2mysql  output.csv
