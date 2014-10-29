@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo "function getRoxVimrcFile(){"
-	vimrcEncodedContent="$(cat vimrc | base64)"
+	vimrcEncodedContent="$(cat *vimrc | base64)"
 
 	echo '
 	local roxVimrcFile=/tmp/rox_vimrc_$(echo "$(whoami)" | b64encode )
@@ -12,8 +12,5 @@ echo "function getRoxVimrcFile(){"
 echo "}"
 
 
-echo "{"
-
 cat init.sh
 
-echo "}"
