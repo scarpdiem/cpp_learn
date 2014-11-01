@@ -30,6 +30,9 @@ class NetUtilsHttpLoadOptions{
 function NetUtilsHttpLoad(NetUtilsHttpLoadOptions $options, & $loadData){
 	$ch = curl_init();
 	curl_setopt($ch, CURLOPT_URL, $options->url);
+
+	curl_setopt($ch, CURLOPT_TIMEOUT, $options->timeoutSeconds);
+
 	if(count($options->headers)!=0){
 		curl_setopt($ch, CURLOPT_HTTPHEADER, $options->headers);
 	}

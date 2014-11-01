@@ -1,6 +1,6 @@
 <?php 
 
-require_once dirname(__FILE__) . '/' . '../../libs/rlib/Db.php';
+require_once dirname(__FILE__) . '/' . '../../libs/rlib/DbMysqli.php';
 require_once dirname(__FILE__) . '/' . '../PhpLearnDbConfig.php';
 
 class CommonDao{
@@ -8,7 +8,7 @@ class CommonDao{
 	private $db = NULL;
 	
 	function __construct(){
-		$this->db = new Db(PhpLearnDbConfig());
+		$this->db = new DbMysqli(PhpLearnDbConfig());
 	}
 	
 	function SetConfig($name, $value){

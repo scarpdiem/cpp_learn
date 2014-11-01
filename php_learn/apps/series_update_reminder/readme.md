@@ -4,4 +4,5 @@
 
 每10分钟检查一次
 
-*/10 * * * *  cd /data/php_learn/apps/series_update_reminder/ && /usr/bin/php check.php >  /dev/null 2>&1
+	*/20 * * * *  cd /data/git/cpp_learn/php_learn/apps/series_update_reminder/ && /usr/bin/php check.php 
+

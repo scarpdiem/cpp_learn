@@ -1,6 +1,6 @@
 <?php 
 
-require '../../libs/PHPMailer-master/PHPMailerAutoload.php';
+require_once dirname(__FILE__) . "/" .  '../../libs/PHPMailer-master/PHPMailerAutoload.php';
 
 /**
  * @param string $from QQ邮箱发件人的用户名，如"346897220@qq.com"，注意这个账户需要开通SMTP服务。
