@@ -1,3 +1,6 @@
+
+CREATE DATABASE php_learn DEFAULT CHARACTER SET utf8;
+
 use php_learn;
 
 drop table if exists common_config ;
