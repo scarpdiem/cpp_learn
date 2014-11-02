@@ -1,14 +1,10 @@
-#!/bin/bash
 
-
+##
+# Read ssh password from std input
 function scpex(){
-
         read -p "password: " password
-
         local expectCmd='
-
         set timeout 10
-
         spawn scp '"$@"'
         expect {
                 "*yes/no" { send "yes\r" }
@@ -18,8 +14,6 @@ function scpex(){
                 }
         }
         '
-
         expect -c "$expectCmd"
-
 }
 
