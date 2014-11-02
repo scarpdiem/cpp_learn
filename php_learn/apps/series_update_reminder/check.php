@@ -34,7 +34,7 @@ function ScanRules($dao){
 		$options = new NetUtilsHttpLoadOptions(); 
 		$options->url = $url;
 		$options->method = "GET";
-		$options->timeoutSeconds = 20; // 10s timeout
+		$options->timeoutSeconds = 20; // 20s timeout
 		$loadData = "";
 		$errorMessage = NetUtilsHttpLoad($options, $loadData);
 		if($errorMessage != ""){

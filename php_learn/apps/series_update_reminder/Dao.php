@@ -46,19 +46,96 @@ class Dao{
 	}
 
 	function GetRules(Dao_GetRulesIn $in, Dao_GetRulesOut $out){
-		$result = $this->db->Execute(
-			"select * from series_update_reminder_rules"
-		);
+		$query  = array();
+		$query[] = "select r.id as i_rule_id, r.s_url as s_url, r.s_pattern as s_pattern, r.s_pattern_type as s_pattern_type, r.d_last_update as d_last_update, u.s_subscriber as s_subscriber, u.d_last_mail as d_last_mail";
+		$query[] = "  from series_update_reminder_rules as r, series_update_reminder_subscribers as u ";
+		$query[] = " where r.id=u.i_rule_id ";
+		if($in->user != "" ){
+			$query[] = " and u.s_subscriber=";
+			$query[] = DbWrapStr($in->user);
+		}
+		$result = $this->db->Execute( $query );
+		if($result->errorCode){
+			GetLogger()->error("execute sql error: " . $result->statement . " message:" . $result->errorMessage);
+			$out->errorCode = $result->errorCode;
+			$out->errorMessage = $result->errorMessage;
+			return;
+		}
 		$out->rules = $result->selectResult;
 		$out->errorCode = $result->errorCode;
 		$out->errorMessage = $result->errorMessage;
 	}
 
+	function DeleteRule(Dao_DeleteRuleIn $in, Dao_DeleteRuleOut $out){
+		
+		$this->db->Begin();
+		if($result->errorCode){
+			GetLogger()->error("execute sql error: " . $result->statement . " message:" . $result->errorMessage);
+			$out->errorCode = $result->errorCode;
+			$out->errorMessage = $result->errorMessage;
+			$this->db->RollBack();
+			return;
+		}
+
+		$result = $this->db->Execute(
+			"delete from series_update_reminder_rules where id=", DbWrapStr($in->ruleId)
+			, " and s_creator=", DbWrapStr($in->user)
+		);
+		if($result->errorCode){
+			GetLogger()->error("execute sql error: " . $result->statement . " message:" . $result->errorMessage);
+			$out->errorCode = $result->errorCode;
+			$out->errorMessage = $result->errorMessage;
+			$this->db->RollBack();
+			return;
+		}
+		GetLogger()->info("executed: " . $result->statement);
+		
+		$result = $this->db->Execute(
+			"delete from series_update_reminder_subscribers where i_rule_id=", DbWrapStr($in->ruleId)
+			, " and s_subscriber=", DbWrapStr($in->user)
+		);
+		if($result->errorCode){
+			GetLogger()->error("execute sql error: " . $result->statement . " message:" . $result->errorMessage);
+			$out->errorCode = $result->errorCode;
+			$out->errorMessage = $result->errorMessage;
+			$this->db->RollBack();
+			return;
+		}
+		GetLogger()->info("executed: " . $result->statement);
+
+		$result = $this->db->Commit();
+		if($result->errorCode){
+			GetLogger()->error("execute sql error: " . $result->statement . " message:" . $result->errorMessage);
+			$out->errorCode = $result->errorCode;
+			$out->errorMessage = $result->errorMessage;
+			$this->db->RollBack();
+			return;
+		}
+
+		GetLogger()->info("commit success");
+		$out->errorCode = $result->errorCode;
+		$out->errorMessage = $result->errorMessage;
+		return;
+
+	}
+
 	function AddRule(Dao_AddRuleIn $in, Dao_AddRuleOut $out){
+
+		$this->db->Begin();
+		if($result->errorCode){
+			GetLogger()->error("execute sql error: " . $result->statement . " message:" . $result->errorMessage);
+			$out->errorCode = $result->errorCode;
+			$out->errorMessage = $result->errorMessage;
+			$this->db->RollBack();
+			return;
+		}
+
+		// insert rule
 		$result = $this->db->Execute(
 			  "insert into series_update_reminder_rules "
 			, " set s_url=", DbWrapStr($in->url)
 			, ", s_pattern=", DbWrapStr($in->pattern)
+			, ", s_pattern_type='preg' "
 			, ", s_creator=", DbWrapStr($in->creator)
 			, ", s_last_result=", DbWrapStr("")
 		);
@@ -66,9 +143,37 @@ class Dao{
 			GetLogger()->error("execute sql error: " . $result->statement . " message:" . $result->errorMessage);
 			$out->errorCode = $result->errorCode;
 			$out->errorMessage = $result->errorMessage;
+			$this->db->RollBack();
 			return;
 		}
 		GetLogger()->info("executed: " . $result->statement);
+
+		// insert subscriber
+		$result = $this->db->Execute(
+			  "insert into series_update_reminder_subscribers "
+			, " set i_rule_id=LAST_INSERT_ID()"
+			, " , s_subscriber=", DbWrapStr($in->creator)
+			, " , d_last_mail = now()"
+		);
+		if($result->errorCode){
+			GetLogger()->error("execute sql error: " . $result->statement . " message:" . $result->errorMessage);
+			$out->errorCode = $result->errorCode;
+			$out->errorMessage = $result->errorMessage;
+			$this->db->RollBack();
+			return;
+		}
+		GetLogger()->info("executed: " . $result->statement);
+
+		$result = $this->db->Commit();
+		if($result->errorCode){
+			GetLogger()->error("execute sql error: " . $result->statement . " message:" . $result->errorMessage);
+			$out->errorCode = $result->errorCode;
+			$out->errorMessage = $result->errorMessage;
+			$this->db->RollBack();
+			return;
+		}
+
+		GetLogger()->info("commit success");
 		$out->errorCode = $result->errorCode;
 		$out->errorMessage = $result->errorMessage;
 		return;
@@ -128,9 +233,19 @@ class Dao{
 };
 
 class Dao_GetRulesIn{
+	var $user = "";
 };
 class Dao_GetRulesOut{
 	var $rules = array();
+	var $errorCode = 0;
+	var $errorMessage = "";
+};
+
+class Dao_DeleteRuleIn{
+	var $user = "";
+	var $ruleId = 0;
+};
+class Dao_DeleteRuleOut{
 	var $errorCode = 0;
 	var $errorMessage = "";
 };

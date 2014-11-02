@@ -1,8 +1,6 @@
 <?php
 
 require_once dirname(__FILE__) . '/' . '../common/Cgi.php';
-require_once dirname(__FILE__) . '/' . '../common/Dao.php';
-require_once dirname(__FILE__) . '/' . 'PHPMailerSendFromQqConfig.php';
 
 require_once dirname(__FILE__) . '/' . 'Login.php';
 
@@ -14,6 +12,7 @@ $inputValidateKey = CgiInput("validate_key", "");
 
 $errorCode =  LoginValidate($inputMail, $inputValidateKey);
 if( $errorCode ){
+	sleep(1);
 	CgiOutput($errorCode,"validate failed");
 }else{
 	CgiOutput(0,"");
