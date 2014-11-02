@@ -129,43 +129,55 @@ function OnDeleteRule(){
 	});
 }
 
-jQuery(function(){
+function MakePatterFromText (str){
+	return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
+}
 
-	var makePatterFromText = function(str){
-		return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
+function OnPatternInput(){
+
+	var frame = jQuery("iframe");
+	var doc = frame[0].contentWindow.document;
+
+	jQuery("a",doc).css("background-color","");
+
+	if(jQuery("form [name=pattern]").val()==""){
+		return;
 	}
+
+	var pattern = jQuery("form [name=pattern]").val();
+	var patternType = jQuery("form [name=pattern_type]").val();
+	var patternRe = null;
+	if(patternType=="text"){
+		pattern = MakePatterFromText(pattern);
+		patternRe = new RegExp("href=\"[^\"]*" + pattern + "[^\"]*\"");
+	}
+
+	var aTag = jQuery("a",doc).filter(function(){
+		var outerHtml = jQuery("<div></div>").append(jQuery(this).clone()).html();
+		
+		return outerHtml.match(patternRe) != null;
+	});
+	aTag.css("background-color","yellow");
+}
+
+jQuery(function(){
 
 	jQuery("form [name=url]").change(function(){
 		if(jQuery(this).val()!=""){
-			jQuery("iframe").attr("src", "doc_load.php?url=" + jQuery(this).val());
+			// jQuery.ajax({
+			// 	  url: "doc_load.php?url=" + jQuery(this).val()
+			// 	, dataType: "text"
+			// 	, success:function(text){
+			// 		var frame = jQuery("iframe");
+			// 		var doc = frame[0].contentWindow.document;
+			// 		doc.write(text);
+			// 	}
+			// });
+			jQuery("iframe").attr("src","doc_load.php?url=" + jQuery(this).val());
 		}
 	});
 
-	jQuery("form [name=pattern]").change(function(){
-
-		var frame = jQuery("iframe");
-		var doc = frame[0].contentWindow.document;
-		jQuery("a",doc).css("background-color","");
-
-		if(jQuery(this).val()==""){
-			return;
-		}
-
-		var pattern = jQuery(this).val();
-		var patternType = jQuery("form [name=pattern_type]").val();
-		var patternRe = null;
-		if(patternType=="text"){
-			pattern = makePatterFromText(pattern);
-			patternRe = new RegExp("href=\"[^\"]*" + pattern + "[^\"]*\"");
-		}
-
-		var aTag = jQuery("a",doc).filter(function(){
-			var outerHtml = jQuery("<div></div>").append(jQuery(this).clone()).html();
-			
-			return outerHtml.match(patternRe) != null;
-		});
-		aTag.css("background-color","yellow");
-	});
+	jQuery("form [name=pattern]").on("input",OnPatternInput);
 
 	jQuery("form [name=add]").click(function(){
 		
@@ -175,7 +187,7 @@ jQuery(function(){
 		var patternType = jQuery("form [name=pattern_type]").val();
 		var patternRe = null;
 		if(patternType=="text"){
-			pattern = makePatterFromText(pattern);
+			pattern = MakePatterFromText(pattern);
 			patternRe = new RegExp("href=\"[^\"]*" + pattern + "[^\"]*\"");
 			pattern = patternRe.toString();
 		}

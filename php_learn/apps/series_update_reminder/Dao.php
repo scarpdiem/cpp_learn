@@ -47,7 +47,7 @@ class Dao{
 
 	function GetRules(Dao_GetRulesIn $in, Dao_GetRulesOut $out){
 		$query  = array();
-		$query[] = "select r.id as i_rule_id, r.s_url as s_url, r.s_pattern as s_pattern, r.s_pattern_type as s_pattern_type, r.d_last_update as d_last_update, u.s_subscriber as s_subscriber, u.d_last_mail as d_last_mail";
+		$query[] = "select r.id as i_rule_id, r.s_url as s_url, r.s_pattern as s_pattern, r.s_pattern_type as s_pattern_type, r.s_last_result as s_last_result, r.d_last_update as d_last_update, u.s_subscriber as s_subscriber, u.d_last_mail as d_last_mail";
 		$query[] = "  from series_update_reminder_rules as r, series_update_reminder_subscribers as u ";
 		$query[] = " where r.id=u.i_rule_id ";
 		if($in->user != "" ){

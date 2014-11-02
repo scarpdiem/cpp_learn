@@ -66,7 +66,7 @@ function ScanRules($dao){
 
 			// store result in db
 			$updateLastResultIn = new Dao_UpdateRuleLastResultIn();
-			$updateLastResultIn->id = $item["id"];
+			$updateLastResultIn->id = $item["i_rule_id"];
 			$updateLastResultIn->lastResult = $currentResult;
 			$updateLastResultOout = new Dao_UpdateRuleLastResultOut();
 			$dao->UpdateRuleLastResult($updateLastResultIn, $updateLastResultOout);
