@@ -11,7 +11,7 @@
 	if [[ -d $(pwd)/.local_vim ]]; then
 
 		# use --cmd option to execute cmd before any vimrc file loaded to make pathogen work
-		alias vim="$(pwd)/.local_vim/bin/vim --cmd \"source $roxVimRcFile\" -p"
+		alias vim="$(pwd)/.local_vim/bin/vim -u \"$roxVimRcFile\" -p"
 		alias vim 1>&2
 
 		echo "
