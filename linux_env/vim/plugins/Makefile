@@ -34,4 +34,7 @@ tabular.zip:
 	wget -O $@ https://github.com/godlygeek/tabular/archive/master.zip
 
 
+# This plugin is now working
+# headlights.zip: 
+#	wget -O $@ https://github.com/mbadran/headlights/archive/master.zip
 
