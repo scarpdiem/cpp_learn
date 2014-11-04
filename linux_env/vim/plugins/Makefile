@@ -1,5 +1,5 @@
 
-all: surround.tar.gz pathogen.tar.gz mru.tar.gz
+all: surround.tar.gz pathogen.tar.gz mru.tar.gz vim-markdown.zip
 	make clean_tmp
 
 
@@ -25,4 +25,13 @@ mru.tar.gz:
 clean_tmp: clean_tmp_mru.tar.gz
 clean_tmp_mru.tar.gz:
 	rm -rf mru
+
+
+vim-markdown.zip: tabular.zip
+	wget -O $@ https://github.com/plasticboy/vim-markdown/archive/master.zip
+
+tabular.zip: 
+	wget -O $@ https://github.com/godlygeek/tabular/archive/master.zip
+
+
 

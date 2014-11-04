@@ -1,8 +1,8 @@
 {
 
 	unalias vim 2>/dev/null
-	roxVimRcFile=$(getRoxVimrcFile)
-	alias vim="$(which vim | awk '{print $NF}') --cmd \"source $roxVimRcFile\" -p"
+	customVimrcFile=$(getRoxVimrcFile)
+	alias vim="$(which vim | awk '{print $NF}') --cmd \"source $customVimrcFile\" -p"
 	alias vim 1>&2
 
 	localVimDir=".local_vim"
@@ -12,7 +12,7 @@
 	if [[ -d $(pwd)/${localVimDir} ]]; then
 
 		# use --cmd option to execute cmd before any vimrc file loaded to make pathogen work
-		alias vim="$(pwd)/${localVimDir}/bin/vim -u \"$roxVimRcFile\" -p"
+		alias vim="$(pwd)/${localVimDir}/bin/vim -u \"$customVimrcFile\" -p"
 		alias vim 1>&2
 
 		echo "
@@ -27,7 +27,7 @@
 
 			syntax on
 			filetype plugin indent on
-		" >> $roxVimRcFile
+		" >> $customVimrcFile
 
 		if [[ "$(getPluginsTgzEncodedContentMd5sum)" != "$(cat  ${localVimDir}/plugins_md5sum.txt 2>/dev/null )" ]]
 		then
@@ -45,7 +45,7 @@
 				rm $file
 			done
 			for file in $(find ${localVimDir}/plugins/ -name "*.zip") ; do
-				unzip $file
+				unzip -q -d ${localVimDir}/plugins/ $file
 				rm $file
 			done
 
@@ -54,8 +54,13 @@
 			mv ${localVimDir}/plugins/vim-pathogen ${localVimDir}/
 
 			# all other vim plugins
-			for file in $(ls ${localVimDir}/plugins/) ; do
-				mv ${localVimDir}/plugins/$file ${localVimDir}/bundle/
+			for pluginDir in $(ls ${localVimDir}/plugins/) ; do
+				mv ${localVimDir}/plugins/$pluginDir ${localVimDir}/bundle/
+				# add the plugin documentation to vim
+				if [[ -d  ${localVimDir}/bundle/$pluginDir/doc ]] ; then
+					echo  "set runtimepath+=${localVimDir}/bundle/$pluginDir/doc" >> $customVimrcFile
+					vim -E -c "helptags ${localVimDir}/bundle/$pluginDir/doc" -c q
+				fi
 			done
 
 		fi
