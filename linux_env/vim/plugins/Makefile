@@ -1,5 +1,5 @@
 
-all: surround.tar.gz pathogen.tar.gz
+all: surround.tar.gz pathogen.tar.gz mru.tar.gz
 	make clean_tmp
 
 
@@ -17,3 +17,12 @@ pathogen.tar.gz:
 clean_tmp: clean_tmp_pathogen.tar.gz
 clean_tmp_pathogen.tar.gz:
 	rm -rf vim-pathogen
+
+
+mru.tar.gz:
+	git clone https://github.com/yegappan/mru.git
+	tar -zcf mru.tar.gz mru
+clean_tmp: clean_tmp_mru.tar.gz
+clean_tmp_mru.tar.gz:
+	rm -rf mru
+
