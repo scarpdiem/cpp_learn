@@ -193,7 +193,7 @@ PXV0Zi04CgoK' | b64decode > $roxVimrcFile
 echo "$roxVimrcFile"
 }
 function getPluginsTgzEncodedContent(){
-echo 'H4sIAJ9kWFQAA+S4Y6wvwPfut217n23btvfZtm3btm3btm3b9tm2/e3vf3vbtE3avrn3RdMnk6zJ
+echo 'H4sIAD5lWFQAA+S4Y6wvwPfut217n23btvfZtm3btm3btm3b9tm2/e3vf3vbtE3avrn3RdMnk6zJ
 zCTryfpkMnCwcTW3tHNmAPqfKMb/iIOD7X+N7Kz/p/jfBcTEzMrMzsjOzMz8n3EmJnZGDiBCtv+Z
 pv43uTq7GDoREgI52XvYGv4/rPt/m///qBz+O39nVycne1c7E/r/VIPe3Ot/aI7/Asz+f+H+v/Nn
 YWZjZWP/7/xZ2Vj/G39WdlYmIELG/6Eu/m/0/3P+BNFQQGjSGipAoNe81s7b4kkfM/pMwrjBCUQK
@@ -7144,7 +7144,7 @@ ghAIWUGEofUtMKi/2rTH9yHbzmWwI3ZRojvSjT94smHA70vr+pc9R1+nXkbJufTbz//47WUlb7wf
 /79xZOMLXSdBGOAC8oOAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPD/6l9L2ub1AEAGAA=='
 }
 function getPluginsTgzEncodedContentMd5sum(){
-echo '2ce0a7725f19ab84416cfa5681212249  -'
+echo '749d4f6289facb9dd00479c7b0abe93a  -'
 }
 {
 
@@ -7182,7 +7182,7 @@ echo '2ce0a7725f19ab84416cfa5681212249  -'
 
 			echo "updating vim plugins" 1>&2
 
-			rm -rf ${localVimDir}/plugins_md5sum.txt ${localVimDir}/plugins ${localVimDir}/plugins.tar.gz ${localVimDir}/bundle ${localVimDir}/pathogen
+			rm -rf ${localVimDir}/plugins_md5sum.txt ${localVimDir}/plugins ${localVimDir}/plugins.tar.gz ${localVimDir}/bundle ${localVimDir}/vim-pathogen
 	
 			# decompress vim plugins
 			echo "$(getPluginsTgzEncodedContent)" | b64decode > ${localVimDir}/plugins.tar.gz

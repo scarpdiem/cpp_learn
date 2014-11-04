@@ -34,7 +34,7 @@
 
 			echo "updating vim plugins" 1>&2
 
-			rm -rf ${localVimDir}/plugins_md5sum.txt ${localVimDir}/plugins ${localVimDir}/plugins.tar.gz ${localVimDir}/bundle ${localVimDir}/pathogen
+			rm -rf ${localVimDir}/plugins_md5sum.txt ${localVimDir}/plugins ${localVimDir}/plugins.tar.gz ${localVimDir}/bundle ${localVimDir}/vim-pathogen
 	
 			# decompress vim plugins
 			echo "$(getPluginsTgzEncodedContent)" | b64decode > ${localVimDir}/plugins.tar.gz
