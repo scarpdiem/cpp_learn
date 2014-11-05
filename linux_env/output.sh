@@ -189,11 +189,12 @@ ZwpzZXQgZm9sZGVuYWJsZQpzZXQgZm9sZG1ldGhvZD1zeW50YXgKc2V0IGZvbGRsZXZlbD0xMDAK
 CiIgaW5kZW50YXRpb24Kc2V0IHRhYnN0b3A9NApzZXQgc29mdHRhYnN0b3A9NApzZXQgc2hpZnR3
 aWR0aD00IApzZXQgbm9leHBhbmR0YWIKCiIgZW5jb2RpbmcKc2V0IGVuY29kaW5nPXV0Zi04IGZp
 bGVlbmNvZGluZ3M9dWNzLWJvbSx1dGYtOCxnYmssZ2IxODAzMCxsYXRpbjEgdGVybWVuY29kaW5n
-PXV0Zi04CgoKCmxldCBnOnZpbV9tYXJrZG93bl9pbml0aWFsX2ZvbGRsZXZlbD0xMDAKCg==' | b64decode > $roxVimrcFile
+PXV0Zi04CgoiCm5ub3JlbWFwIC8gIDovCgoKbGV0IGc6dmltX21hcmtkb3duX2luaXRpYWxfZm9s
+ZGxldmVsPTEwMAoK' | b64decode > $roxVimrcFile
 echo "$roxVimrcFile"
 }
 function getPluginsTgzEncodedContent(){
-echo 'H4sIAOcRWVQAA+y4c6xvwRuvt217n23btvfZtm3btm3btm3b9tm2/e3vtvcmbZO2/9zbpmmfTDJr
+echo 'H4sIAJu7WVQAA+y4c6xvwRuvt217n23btvfZtm3btm3btm3b9tm2/e3vtvcmbZO2/9zbpmmfTDJr
 zUwyb9aTT9as5WDjam5p58wA9D8Qxv/AwcH2v/TsrP+b/r8CxMTMyszOzMTIwfyfdUxM7EyMQIRs
 /yOL+m+4OrsYOhESAjnZe9ga/p+s+7+a/38pDv/Vv5ulLZ2toZO1ib27Hf1/bpyM//vt8V8Es//v
 vP9v/LOx/Ff/jCxMrBz/8c/GzM4CRMj436+E/2P+P+4fxsbUhdCc+z/G9f+bfn1LO0sXS0MbfTN7
@@ -8709,7 +8710,7 @@ ACu9KSMLKzM7OwOzKT0rB4uJiSGrEQM9M70xB5uBsZEBB5MRswm9oSHAv/Qv/Uv/0r/0L/1L/9K/
 9C/9X9f/A9bEzwAAqAcA'
 }
 function getPluginsTgzEncodedContentMd5sum(){
-echo '2ab7e9fdae101b73e38a0e37fd150ea1  -'
+echo '9c418a5a5761e89869a24a7f44b5ad1b  -'
 }
 {
 
