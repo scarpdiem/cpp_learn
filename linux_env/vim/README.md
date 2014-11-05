@@ -37,20 +37,14 @@ Compile cmake from source with:
 
 ### Search and Replace
 
-#### Replace one by one
+- Replace one by one
+    - `:s/search_string/replace_string/` to replace the first string found in the cursor line, Then `n` to find the next, then `&` to repeat the last substitute command.
+        - `s`   substitute
 
-`:s/search_string/replace_string/` to replace the first string found in the cursor line, Then `n` to find the next, then `&` to repeat the last substitute command.
-
-`s`	substitute
-	
-#### Replace all
-
-`:%s/search_string/replace_string/g`
-
-`%`	Traverse and Execute all lines
-`g`	Replace all occurance in the line.
-
-#### Replace inside blocks
-
-`v` or `V`, and then `:s/search_string/replace_string/`
+- Replace all
+    - `:%s/search_string/replace_string/g`
+        - `%`	Traverse and Execute all lines
+        - `g`	Replace all occurance in the line.
+- Replace inside blocks
+    - `v` or `V`, and then `:s/search_string/replace_string/`
 
