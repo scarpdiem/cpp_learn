@@ -18,7 +18,7 @@ Compile cmake from source with:
 
 
 
-# List of useful commands:
+# A Minimum List of Useful Commands:
 
 
 ### Normal mode Movint
