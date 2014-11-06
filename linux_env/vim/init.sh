@@ -16,18 +16,15 @@
 		alias vim 1>&2
 
 		echo "
-			set nocompatible
-			syntax off
-			filetype off
-			
 			set rtp+=$(pwd)/${localVimDir}/
 			set rtp+=$(pwd)/${localVimDir}/vim-pathogen/
 
+			set nocompatible
 			execute pathogen#infect('$(pwd)/${localVimDir}/bundle/{}')
-
 			syntax on
 			filetype plugin indent on
-		" >> $customVimrcFile
+			$(cat $customVimrcFile)
+		" > $customVimrcFile
 
 		if [[ "$(getPluginsTgzEncodedContentMd5sum)" != "$(cat  ${localVimDir}/plugins_md5sum.txt 2>/dev/null )" ]]
 		then

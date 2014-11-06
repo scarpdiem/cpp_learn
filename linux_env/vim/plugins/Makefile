@@ -34,6 +34,11 @@ tabular.zip:
 	wget -O $@ https://github.com/godlygeek/tabular/archive/master.zip
 
 
+# Can't match JavaScript inside html <script> tag
+matchit.zip:
+	wget -O $@ https://github.com/tmhedberg/matchit/archive/master.zip
+
+
 # This plugin is now working
 # headlights.zip: 
 #	wget -O $@ https://github.com/mbadran/headlights/archive/master.zip
