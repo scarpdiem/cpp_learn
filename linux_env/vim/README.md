@@ -48,3 +48,8 @@ Compile cmake from source with:
 - Replace inside blocks
     - `v` or `V`, and then `:s/search_string/replace_string/`
 
+
+### Diff
+
+- `vimdiff  FILE_LEFT  FILE_RIGHT` or `vim -d  FILE_LEFT  FILE_RIGHT` or `:vertical diffsplit FILE_RIGHT`
+

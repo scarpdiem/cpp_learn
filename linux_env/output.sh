@@ -194,7 +194,7 @@ ZGxldmVsPTEwMAoK' | b64decode > $roxVimrcFile
 echo "$roxVimrcFile"
 }
 function getPluginsTgzEncodedContent(){
-echo 'H4sIAAXQWlQAA+y4c6xvwRuvt217n23btvfZtm3btm3btm3b9tm2/e3v9vYmbZO2/9zbpmmfTDIz
+echo 'H4sIAPrQWlQAA+y4c6xvwRuvt217n23btvfZtm3btm3btm3b9tm2/e3v9vYmbZO2/9zbpmmfTDIz
 a00yb+bJJwsONq7mlnbODED/A2H8DxwcbP+1Z2f93/T/C0BMzKzM7GysHBwczECMTEzszBxAhGz/
 I4v6b7g6uxg6ERICOdl72Br+n6z7v7r//1Ic/hf/bpa2dLaGTtYm9u529P+ZOBn/99vjvwhm/995
 /9/4Z2P5r/6ZGVmYWDn+45+NmZ0FiJDxv18J/8f8f9w/jI2pC6E593+M6/83/fqWdpYuloY2+mb2
@@ -8431,7 +8431,7 @@ KQwBQQfBxWLFxsnFwcPDymHFwsXLaWlpxmXOysLBYsHLbWphbsrLbs5hyWJmBvHmzZs3b968efPm
 zZs3b968efPmzZs3b968efPmzZs3b968efPmzf/q/wCzeJiVAIAHAA=='
 }
 function getPluginsTgzEncodedContentMd5sum(){
-echo '4b770632b0de80257423c747f90fe65a  -'
+echo '83df6598aa04a4891cb94ad938fdf557  -'
 }
 {
 
