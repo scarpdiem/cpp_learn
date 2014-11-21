@@ -95,6 +95,8 @@ set noexpandtab
 " encoding
 set encoding=utf-8 fileencodings=ucs-bom,utf-8,gbk,gb18030,latin1 termencoding=utf-8
 
-"
+" searching
 nnoremap /  :/
+" :help last-pattern
+noremap <ESC><ESC> :let @/ = ""<CR>
 

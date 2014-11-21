@@ -34,7 +34,7 @@
 			rm -rf ${localVimDir}/plugins_md5sum.txt ${localVimDir}/plugins ${localVimDir}/plugins.tar.gz ${localVimDir}/bundle ${localVimDir}/vim-pathogen
 	
 			# decompress vim plugins
-			echo "$(getPluginsTgzEncodedContent)" | b64decode > ${localVimDir}/plugins.tar.gz
+			echo "$(getPluginsTgzEncodedContent)" | base64_decode > ${localVimDir}/plugins.tar.gz
 			tar -zxf ${localVimDir}/plugins.tar.gz -C ${localVimDir}/ && rm ${localVimDir}/plugins.tar.gz
 			getPluginsTgzEncodedContentMd5sum > ${localVimDir}/plugins_md5sum.txt
 			for file in $(find ${localVimDir}/plugins/ -name "*.tar.gz") ; do

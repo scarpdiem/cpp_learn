@@ -1,6 +1,6 @@
 <?php
 
-function Render($phpFileName, $data, &$outputStr){
+function RenderPhpToString($phpFileName, $data, &$outputStr){
 	if (!is_file($phpFileName)) {
 		return __LINE__;
 	}

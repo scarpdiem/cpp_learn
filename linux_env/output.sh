@@ -58,19 +58,41 @@ function make_print_include_path_for_ctags(){
 ##
 # Read ssh password from std input
 function scpex(){
-        read -p "password: " password
+
+		read -p "password: " password
+
         local expectCmd='
-        set timeout 10
+
+		# read password
+		# send_user "password:\ "
+		# expect_user -re "(.*)\n"
+		# set password  "$expect_out(0,string)"
+
+		set password "'"$password"'"
+		set password_sent 0
+
+        set timeout 30
         spawn scp '"$@"'
-        expect {
-                "*yes/no" { send "yes\r" }
-                "*password" {
-                        send "'"$password"'\r"
-                        exp_continue
-                }
-        }
+
+		expect {
+			"*yes/no" { 
+				send "yes\r" 
+				expect "*password" {
+						send "$password\r"
+						set password_sent 1
+				}
+			}
+			"*assword" { 
+				send  "$password\r"
+				set password_sent 1
+			}
+		}
+
+		expect eof
+
         '
-        expect -c "$expectCmd"
+
+        expect  -c "$expectCmd"  -f /dev/null
 }
 
 #/bin/bash
@@ -114,17 +136,17 @@ STZCV4y8YNMGbOfBB1M7c9aYVrI2MGUBwlEyoaW6GYzLRpE85xB5kPPGJYnVh3vK+01hQbWWlmVN
 rzOaNxpcBaQcmdTi5MyiwYov10ojHazhroQpial0doFKnMmjNpCBKlZWhhLwjGygUg7ZMFTBtWQZ
 hbpKVNdUsTn/xHuMTiigpiQGdeQy5SjIePImDb3zeY4NLMPBMFAZJlEVgQqJhylEjoIZnRvadrVW
 ZbNlU0jWqdd3RZhJbtrDxIoZxOVCFd2kVWbTmXpRUdEkgRYKJATaBEUyQVIZqsSURmQbpVA9nGTg
-TuJOSmQ9U0DvQvW6ZUcpPaUmLRiJIXraieqJqFQrQhOIlZVa//i7kinChIds47/Q' | b64decode | bzcat`"  $@
+TuJOSmQ9U0DvQvW6ZUcpPaUmLRiJIXraieqJqFQrQhOIlZVa//i7kinChIds47/Q' | base64_decode | bzcat`"  $@
 }
 
-function b64encode(){
+function base64_encode(){
 	python -c '
 import base64, sys
 sys.stdout.write(base64.b64encode(sys.stdin.read()))
 	'
 }
 
-function b64decode(){
+function base64_decode(){
 	python -c '
 import base64, sys
 sys.stdout.write(base64.b64decode(sys.stdin.read()))
@@ -134,16 +156,22 @@ function urldecode(){
 python  -c "`echo 'QlpoOTFBWSZTWY93CBIAABLfgAAwaHewUQIAAAo/5/+gMAClg0JTNR5I9pJ6BG0j1NNNAajSZNGI
 AAANACUpo0aAGjQI0YCMMiMQJqe8mCxWlF/arFN/lp0hxcP2h6qAtxzNBzUVYC8RuDjKI3Zjnox8
 7IUOXRa65jXw9tNnWoZFlKSU2DJHLS5YRDAHRbHUEHSeJsYI4Ii9M8I6Cu/AozA8NqRrnHYw+1jj
-cS1bEl2S8aLJ0kS4fkpI4ztFGLBS/hOTEwjvBdyRThQkI93CBIA=' | b64decode | bzcat`"  $@
+cS1bEl2S8aLJ0kS4fkpI4ztFGLBS/hOTEwjvBdyRThQkI93CBIA=' | base64_decode | bzcat`"  $@
 }
 function urlencode(){
 python  -c "`echo 'QlpoOTFBWSZTWasC4oYAABHfgAAwaHOwUQIAAAo/5/+gMAC6mISaPU00aMmQDQ0NAMZNMgZNDIMj
 TAjBKEgMjSGCaA0wjRURSKTtr1dCxpzlDKbFvu5nGek48rE0UiXeGYqsMAuBbgSYWB4fDTU6Xrsg
 Z1ayJ4c7FBDImEWtyhFKqkTW0Dp5K1p9rMSStTU8ZRl0Hay7bn5IGxUZluGBwUZ8y81EuloSEEwO
-ZKVo+8Uc/E4R+Uw0norIEBL6C7kinChIVYFxQwA=' | b64decode | bzcat`"  $@
+ZKVo+8Uc/E4R+Uw0norIEBL6C7kinChIVYFxQwA=' | base64_decode | bzcat`"  $@
+}
+function hex_decode(){
+python  -c "`echo 'QlpoOTFBWSZTWdMZTB4AAA7bgAAQeP+QUggEP+ff4CAAiCKep6mgaNGTCaAA0A0EptNMmRPUHqaM
+gHpNJjoIgHl5ISfbIKTQ7cAi6f1dgJayCtR0FZqFX3A1krxEeHusaF4yZkb2uKbQcHVGuit086pc
+hy5pVSVzB9I8SHLrRmCi3K4BFktYmEBhDIsalG4OdDUpCC5IU8AP14kNtjFGlaL5hhPE4BbdgOgs
+pfwEN8cCaW7+LuSKcKEhpjKYPA==' | base64_decode | bzcat`"  $@
 }
 function getRoxVimrcFile(){
-local roxVimrcFile=/tmp/rox_vimrc_$(echo "$(whoami)" | b64encode )
+local roxVimrcFile=/tmp/rox_vimrc_$(echo "$(whoami)" | base64_encode )
 echo 'CnNldCBub2NvbXBhdGlibGUJIiBVc2UgVmltIGRlZmF1bHRzIChtdWNoIGJldHRlciEpCnNldCBi
 cz1pbmRlbnQsZW9sLHN0YXJ0CQkiIGFsbG93IGJhY2tzcGFjaW5nIG92ZXIgZXZlcnl0aGluZyBp
 biBpbnNlcnQgbW9kZQoic2V0IGFpCQkJIiBhbHdheXMgc2V0IGF1dG9pbmRlbnRpbmcgb24KInNl
@@ -189,12 +217,13 @@ ZwpzZXQgZm9sZGVuYWJsZQpzZXQgZm9sZG1ldGhvZD1zeW50YXgKc2V0IGZvbGRsZXZlbD0xMDAK
 CiIgaW5kZW50YXRpb24Kc2V0IHRhYnN0b3A9NApzZXQgc29mdHRhYnN0b3A9NApzZXQgc2hpZnR3
 aWR0aD00IApzZXQgbm9leHBhbmR0YWIKCiIgZW5jb2RpbmcKc2V0IGVuY29kaW5nPXV0Zi04IGZp
 bGVlbmNvZGluZ3M9dWNzLWJvbSx1dGYtOCxnYmssZ2IxODAzMCxsYXRpbjEgdGVybWVuY29kaW5n
-PXV0Zi04CgoiCm5ub3JlbWFwIC8gIDovCgoKbGV0IGc6dmltX21hcmtkb3duX2luaXRpYWxfZm9s
-ZGxldmVsPTEwMAoK' | b64decode > $roxVimrcFile
+PXV0Zi04CgoiIHNlYXJjaGluZwpubm9yZW1hcCAvICA6LwoiIDpoZWxwIGxhc3QtcGF0dGVybgpu
+b3JlbWFwIDxFU0M+PEVTQz4gOmxldCBALyA9ICIiPENSPgoKCmxldCBnOnZpbV9tYXJrZG93bl9p
+bml0aWFsX2ZvbGRsZXZlbD0xMDAKCg==' | base64_decode > $roxVimrcFile
 echo "$roxVimrcFile"
 }
 function getPluginsTgzEncodedContent(){
-echo 'H4sIAPrQWlQAA+y4c6xvwRuvt217n23btvfZtm3btm3btm3b9tm2/e3v9vYmbZO2/9zbpmmfTDIz
+echo 'H4sIAHFpb1QAA+y4c6xvwRuvt217n23btvfZtm3btm3btm3b9tm2/e3v9vYmbZO2/9zbpmmfTDIz
 a00yb+bJJwsONq7mlnbODED/A2H8DxwcbP+1Z2f93/T/C0BMzKzM7GysHBwczECMTEzszBxAhGz/
 I4v6b7g6uxg6ERICOdl72Br+n6z7v7r//1Ic/hf/bpa2dLaGTtYm9u529P+ZOBn/99vjvwhm/995
 /9/4Z2P5r/6ZGVmYWDn+45+NmZ0FiJDxv18J/8f8f9w/jI2pC6E593+M6/83/fqWdpYuloY2+mb2
@@ -8431,7 +8460,7 @@ KQwBQQfBxWLFxsnFwcPDymHFwsXLaWlpxmXOysLBYsHLbWphbsrLbs5hyWJmBvHmzZs3b968efPm
 zZs3b968efPmzZs3b968efPmzZs3b968efPmzf/q/wCzeJiVAIAHAA=='
 }
 function getPluginsTgzEncodedContentMd5sum(){
-echo '83df6598aa04a4891cb94ad938fdf557  -'
+echo '7b64613696df585d53d51a98f4d91514  -'
 }
 {
 
@@ -8469,7 +8498,7 @@ echo '83df6598aa04a4891cb94ad938fdf557  -'
 			rm -rf ${localVimDir}/plugins_md5sum.txt ${localVimDir}/plugins ${localVimDir}/plugins.tar.gz ${localVimDir}/bundle ${localVimDir}/vim-pathogen
 	
 			# decompress vim plugins
-			echo "$(getPluginsTgzEncodedContent)" | b64decode > ${localVimDir}/plugins.tar.gz
+			echo "$(getPluginsTgzEncodedContent)" | base64_decode > ${localVimDir}/plugins.tar.gz
 			tar -zxf ${localVimDir}/plugins.tar.gz -C ${localVimDir}/ && rm ${localVimDir}/plugins.tar.gz
 			getPluginsTgzEncodedContentMd5sum > ${localVimDir}/plugins_md5sum.txt
 			for file in $(find ${localVimDir}/plugins/ -name "*.tar.gz") ; do

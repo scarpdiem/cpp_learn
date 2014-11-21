@@ -1,7 +1,4 @@
 
-
-
-
 # Environment setup
 
 Compile vim from source with:
@@ -31,7 +28,8 @@ Compile cmake from source with:
 
 - `Ctrl-B`	Move to beginning of command line.
 - `Ctrl-E`	Move to end of command line.
-- `Ctrl-W`	Delete the word before the cursor.  - Ctrl-U	Delete the word before the cursor.
+- `Ctrl-W`	Delete the word before the cursor.  
+- `Ctrl-U`	Delete all words before the cursor.
 - `Ctrl-F`	Open command line window.
 
 
@@ -52,4 +50,15 @@ Compile cmake from source with:
 ### Diff
 
 - `vimdiff  FILE_LEFT  FILE_RIGHT` or `vim -d  FILE_LEFT  FILE_RIGHT` or `:vertical diffsplit FILE_RIGHT`
+
+
+### Paste
+
+- `:set paste` and `:set nopaste`, used to paste some snippet of code, that already has indentatio.
+
+
+### External Commands
+
+- `:sh`			Open a bash shell.
+- `:read !cmd`	Execute a shell command, read the output into vim.
 

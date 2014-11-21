@@ -2,8 +2,8 @@
 
 echo "function getRoxVimrcFile(){"
 	vimrcEncodedContent="$(cat *vimrc plugins/*vimrc | base64)"
-	echo 'local roxVimrcFile=/tmp/rox_vimrc_$(echo "$(whoami)" | b64encode )'
-	echo "echo '$vimrcEncodedContent' | b64decode > \$roxVimrcFile"
+	echo 'local roxVimrcFile=/tmp/rox_vimrc_$(echo "$(whoami)" | base64_encode )'
+	echo "echo '$vimrcEncodedContent' | base64_decode > \$roxVimrcFile"
 	echo "echo \"\$roxVimrcFile\""
 echo "}"
 

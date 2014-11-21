@@ -56,15 +56,15 @@ python  -c \"\`$(TextFileEncodedToScript $pythonScript)\`\"  \$@
 ##
 # encode text file content to bash script string
 function TextFileEncodedToScript(){
-	# The client macine may not have base64 program, thus we use the b64decode 
+	# The client macine may not have base64 program, thus we use the base64_decode 
 	# function in the output script file
 	local fileName=$1
 	if [[ "$option_compress" = "1" ]]; then
 		local encodedTextContent=$(bzip2 -c $fileName | base64)
-		echo "echo '$encodedTextContent' | b64decode | bzcat"
+		echo "echo '$encodedTextContent' | base64_decode | bzcat"
 	else
 		local encodedTextContent=$(cat $fileName | base64)
-		echo "echo '$encodedTextContent' | b64decode"
+		echo "echo '$encodedTextContent' | base64_decode"
 	fi
 }
 
