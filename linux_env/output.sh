@@ -223,7 +223,7 @@ bml0aWFsX2ZvbGRsZXZlbD0xMDAKCg==' | base64_decode > $roxVimrcFile
 echo "$roxVimrcFile"
 }
 function getPluginsTgzEncodedContent(){
-echo 'H4sIAHFpb1QAA+y4c6xvwRuvt217n23btvfZtm3btm3btm3b9tm2/e3v9vYmbZO2/9zbpmmfTDIz
+echo 'H4sIAM9sb1QAA+y4c6xvwRuvt217n23btvfZtm3btm3btm3b9tm2/e3v9vYmbZO2/9zbpmmfTDIz
 a00yb+bJJwsONq7mlnbODED/A2H8DxwcbP+1Z2f93/T/C0BMzKzM7GysHBwczECMTEzszBxAhGz/
 I4v6b7g6uxg6ERICOdl72Br+n6z7v7r//1Ic/hf/bpa2dLaGTtYm9u529P+ZOBn/99vjvwhm/995
 /9/4Z2P5r/6ZGVmYWDn+45+NmZ0FiJDxv18J/8f8f9w/jI2pC6E593+M6/83/fqWdpYuloY2+mb2
@@ -8460,7 +8460,7 @@ KQwBQQfBxWLFxsnFwcPDymHFwsXLaWlpxmXOysLBYsHLbWphbsrLbs5hyWJmBvHmzZs3b968efPm
 zZs3b968efPmzZs3b968efPmzZs3b968efPmzf/q/wCzeJiVAIAHAA=='
 }
 function getPluginsTgzEncodedContentMd5sum(){
-echo '7b64613696df585d53d51a98f4d91514  -'
+echo 'ebf91e62f768c46b5e093b78e73b0b79  -'
 }
 {
 
@@ -8469,9 +8469,9 @@ echo '7b64613696df585d53d51a98f4d91514  -'
 	alias vim="$(which vim | awk '{print $NF}') --cmd \"source $customVimrcFile\" -p"
 	alias vim 1>&2
 
-	localVimDir=".local_vim"
+	localVimDir=".local_software/local_vim"
 
-	cd $(dirname ${BASH_SOURCE[0]}) 
+	cd $(dirname ${BASH_SOURCE[0]})
 	echo "$(dirname ${BASH_SOURCE[0]})" 1>&2
 	if [[ -d $(pwd)/${localVimDir} ]]; then
 
@@ -8479,6 +8479,7 @@ echo '7b64613696df585d53d51a98f4d91514  -'
 		alias vim="$(pwd)/${localVimDir}/bin/vim -u \"$customVimrcFile\" -p"
 		alias vim 1>&2
 
+		# add pathogen initialization to the beginning of vimrc file
 		echo "
 			set rtp+=$(pwd)/${localVimDir}/
 			set rtp+=$(pwd)/${localVimDir}/vim-pathogen/
@@ -8487,10 +8488,11 @@ echo '7b64613696df585d53d51a98f4d91514  -'
 			execute pathogen#infect('$(pwd)/${localVimDir}/bundle/{}')
 			syntax on
 			filetype plugin indent on
+
 			$(cat $customVimrcFile)
 		" > $customVimrcFile
 
-		if [[ "$(getPluginsTgzEncodedContentMd5sum)" != "$(cat  ${localVimDir}/plugins_md5sum.txt 2>/dev/null )" ]]
+		if [[ "$(getPluginsTgzEncodedContentMd5sum)" != "$(cat ${localVimDir}/plugins_md5sum.txt 2>/dev/null )" ]]
 		then
 
 			echo "updating vim plugins" 1>&2
@@ -8498,14 +8500,14 @@ echo '7b64613696df585d53d51a98f4d91514  -'
 			rm -rf ${localVimDir}/plugins_md5sum.txt ${localVimDir}/plugins ${localVimDir}/plugins.tar.gz ${localVimDir}/bundle ${localVimDir}/vim-pathogen
 	
 			# decompress vim plugins
-			echo "$(getPluginsTgzEncodedContent)" | base64_decode > ${localVimDir}/plugins.tar.gz
-			tar -zxf ${localVimDir}/plugins.tar.gz -C ${localVimDir}/ && rm ${localVimDir}/plugins.tar.gz
+			echo "$(getPluginsTgzEncodedContent)" | base64_decode > ${localVimDir}/plugins.tar.gz			# plugins.tar.gz
+			tar -zxf ${localVimDir}/plugins.tar.gz -C ${localVimDir}/ && rm ${localVimDir}/plugins.tar.gz	# decompress plugins.tar.gz
 			getPluginsTgzEncodedContentMd5sum > ${localVimDir}/plugins_md5sum.txt
-			for file in $(find ${localVimDir}/plugins/ -name "*.tar.gz") ; do
+			for file in $(find ${localVimDir}/plugins/ -name "*.tar.gz") ; do		# vimplugin.tar.gz
 				tar -xzf $file -C ${localVimDir}/plugins/
 				rm $file
 			done
-			for file in $(find ${localVimDir}/plugins/ -name "*.zip") ; do
+			for file in $(find ${localVimDir}/plugins/ -name "*.zip") ; do			# vimplugin.zip
 				unzip -q -d ${localVimDir}/plugins/ $file
 				rm $file
 			done

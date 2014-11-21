@@ -5,9 +5,9 @@
 	alias vim="$(which vim | awk '{print $NF}') --cmd \"source $customVimrcFile\" -p"
 	alias vim 1>&2
 
-	localVimDir=".local_vim"
+	localVimDir=".local_software/local_vim"
 
-	cd $(dirname ${BASH_SOURCE[0]}) 
+	cd $(dirname ${BASH_SOURCE[0]})
 	echo "$(dirname ${BASH_SOURCE[0]})" 1>&2
 	if [[ -d $(pwd)/${localVimDir} ]]; then
 
@@ -15,6 +15,7 @@
 		alias vim="$(pwd)/${localVimDir}/bin/vim -u \"$customVimrcFile\" -p"
 		alias vim 1>&2
 
+		# add pathogen initialization to the beginning of vimrc file
 		echo "
 			set rtp+=$(pwd)/${localVimDir}/
 			set rtp+=$(pwd)/${localVimDir}/vim-pathogen/
@@ -23,10 +24,11 @@
 			execute pathogen#infect('$(pwd)/${localVimDir}/bundle/{}')
 			syntax on
 			filetype plugin indent on
+
 			$(cat $customVimrcFile)
 		" > $customVimrcFile
 
-		if [[ "$(getPluginsTgzEncodedContentMd5sum)" != "$(cat  ${localVimDir}/plugins_md5sum.txt 2>/dev/null )" ]]
+		if [[ "$(getPluginsTgzEncodedContentMd5sum)" != "$(cat ${localVimDir}/plugins_md5sum.txt 2>/dev/null )" ]]
 		then
 
 			echo "updating vim plugins" 1>&2
@@ -34,14 +36,14 @@
 			rm -rf ${localVimDir}/plugins_md5sum.txt ${localVimDir}/plugins ${localVimDir}/plugins.tar.gz ${localVimDir}/bundle ${localVimDir}/vim-pathogen
 	
 			# decompress vim plugins
-			echo "$(getPluginsTgzEncodedContent)" | base64_decode > ${localVimDir}/plugins.tar.gz
-			tar -zxf ${localVimDir}/plugins.tar.gz -C ${localVimDir}/ && rm ${localVimDir}/plugins.tar.gz
+			echo "$(getPluginsTgzEncodedContent)" | base64_decode > ${localVimDir}/plugins.tar.gz			# plugins.tar.gz
+			tar -zxf ${localVimDir}/plugins.tar.gz -C ${localVimDir}/ && rm ${localVimDir}/plugins.tar.gz	# decompress plugins.tar.gz
 			getPluginsTgzEncodedContentMd5sum > ${localVimDir}/plugins_md5sum.txt
-			for file in $(find ${localVimDir}/plugins/ -name "*.tar.gz") ; do
+			for file in $(find ${localVimDir}/plugins/ -name "*.tar.gz") ; do		# vimplugin.tar.gz
 				tar -xzf $file -C ${localVimDir}/plugins/
 				rm $file
 			done
-			for file in $(find ${localVimDir}/plugins/ -name "*.zip") ; do
+			for file in $(find ${localVimDir}/plugins/ -name "*.zip") ; do			# vimplugin.zip
 				unzip -q -d ${localVimDir}/plugins/ $file
 				rm $file
 			done

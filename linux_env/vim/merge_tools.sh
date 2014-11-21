@@ -13,7 +13,7 @@ echo "function getPluginsTgzEncodedContent(){"
 echo "}"
 
 echo "function getPluginsTgzEncodedContentMd5sum(){"
-	echo "echo '$(echo $pluginsTgzEncodedContent| md5sum)'"
+	echo "echo '$(echo $pluginsTgzEncodedContent | md5sum)'"
 echo "}"
 
 
