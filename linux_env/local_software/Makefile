@@ -1,4 +1,12 @@
 
+export: get_source
+	mkdir -p tmp/.local_software
+	cp Makefile *.*  tmp/.local_software/
+	cd tmp && zip -r local_software.zip .local_software
+	mv tmp/local_software.zip ./
+	rm -rf tmp
+
+
 get_source: vim.zip
 
 install: local_vim
