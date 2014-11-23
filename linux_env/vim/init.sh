@@ -18,7 +18,7 @@
 		# add pathogen initialization to the beginning of vimrc file
 		echo "
 			set rtp+=$(pwd)/${localVimDir}/
-			set rtp+=$(pwd)/${localVimDir}/vim-pathogen/
+			set rtp+=$(pwd)/${localVimDir}/vim-pathogen-master/
 
 			set nocompatible
 			execute pathogen#infect('$(pwd)/${localVimDir}/bundle/{}')
@@ -33,7 +33,7 @@
 
 			echo "updating vim plugins" 1>&2
 
-			rm -rf ${localVimDir}/plugins_md5sum.txt ${localVimDir}/plugins ${localVimDir}/plugins.tar.gz ${localVimDir}/bundle ${localVimDir}/vim-pathogen
+			rm -rf ${localVimDir}/plugins_md5sum.txt ${localVimDir}/plugins ${localVimDir}/plugins.tar.gz ${localVimDir}/bundle ${localVimDir}/vim-pathogen-master
 	
 			# decompress vim plugins
 			echo "$(getPluginsTgzEncodedContent)" | base64_decode > ${localVimDir}/plugins.tar.gz			# plugins.tar.gz
@@ -50,7 +50,7 @@
 
 			# pathogen, the vim plugin manager
 			mkdir -p  ${localVimDir}/bundle
-			mv ${localVimDir}/plugins/vim-pathogen ${localVimDir}/
+			mv ${localVimDir}/plugins/vim-pathogen-master ${localVimDir}/
 
 			# all other vim plugins
 			for pluginDir in $(ls ${localVimDir}/plugins/) ; do

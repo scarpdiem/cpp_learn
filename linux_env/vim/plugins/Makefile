@@ -1,37 +1,52 @@
 
-all: surround.tar.gz pathogen.tar.gz mru.tar.gz vim-markdown.zip
-	make clean_tmp
+all: 
+	@echo done
 
+# Conque
+all: conque.zip
+conque.zip:
+	wget -O $@ https://github.com/vim-scripts/Conque-Shell/archive/master.zip
 
-surround.tar.gz:
-	git clone https://github.com/tpope/vim-surround.git
-	tar -zcf surround.tar.gz vim-surround
-clean_tmp: clean_tmp_surround.tar.gz
-clean_tmp_surround.tar.gz:
-	rm -rf vim-surround
+# Tagbar
+all: tagbar.zip
+tagbar.zip:
+	wget -O $@ https://github.com/majutsushi/tagbar/archive/master.zip
 
+# NERDTree
+all: nerdtree.zip
+nerdtree.zip:
+	wget -O $@ https://github.com/scrooloose/nerdtree/archive/master.zip
 
-pathogen.tar.gz:
-	git  clone https://github.com/tpope/vim-pathogen.git
-	tar -zcf pathogen.tar.gz vim-pathogen
-clean_tmp: clean_tmp_pathogen.tar.gz
-clean_tmp_pathogen.tar.gz:
-	rm -rf vim-pathogen
+# surround
+all: vim-surround.zip
+vim-surround.zip:
+	wget -O $@ https://github.com/tpope/vim-surround/archive/master.zip
 
+# pathogen
+all:  vim-pathogen.zip
+vim-pathogen.zip:
+	wget -O $@ https://github.com/tpope/vim-pathogen/archive/master.zip
 
-mru.tar.gz:
-	git clone https://github.com/yegappan/mru.git
-	tar -zcf mru.tar.gz mru
-clean_tmp: clean_tmp_mru.tar.gz
-clean_tmp_mru.tar.gz:
-	rm -rf mru
+# MRU
+all:   mru.zip
+mru.zip:
+	wget -O $@ https://github.com/yegappan/mru/archive/master.zip
 
-
+# markdown
+all:  vim-markdown.zip
 vim-markdown.zip: tabular.zip
 	wget -O $@ https://github.com/plasticboy/vim-markdown/archive/master.zip
 
+# tabular
+all: tabular.zip
 tabular.zip: 
 	wget -O $@ https://github.com/godlygeek/tabular/archive/master.zip
+
+# ctrlp
+all: ctrlp.zip
+ctrlp.zip:
+	wget -O $@ https://github.com/kien/ctrlp.vim/archive/extensions.zip
+
 
 
 # Can't match JavaScript inside html <script> tag
