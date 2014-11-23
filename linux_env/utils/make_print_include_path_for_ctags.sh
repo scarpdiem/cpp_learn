@@ -40,6 +40,10 @@ function make_print_include_path_for_ctags(){
 		# if is compilation command
 		if [[ "$line" =~ ^[[:blank:]]*(gcc|g\+\+) ]]
 		then
+			# grep:
+			#   -o print only matched part
+			#   -h no file name
+			#   -P perl regex
 			local incOptions=$(echo "$line" | grep -ohP '\s\-I\s*[\S]+'  | sed "s/^\s\-I//")
 			for incOption in $incOptions
 			do
