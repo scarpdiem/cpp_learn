@@ -58,7 +58,7 @@
 				# add the plugin documentation to vim
 				if [[ -d  ${localVimDir}/bundle/$pluginDir/doc ]] ; then
 					echo  "set runtimepath+=${localVimDir}/bundle/$pluginDir/doc" >> $customVimrcFile
-					vim -E -c "helptags ${localVimDir}/bundle/$pluginDir/doc" -c q
+					${localVimDir}/bin/vim -E -c "helptags ${localVimDir}/bundle/$pluginDir/doc" -c q
 				fi
 			done
 

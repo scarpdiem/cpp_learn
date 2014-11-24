@@ -45,8 +45,7 @@ tabular.zip:
 # ctrlp
 all: ctrlp.zip
 ctrlp.zip:
-	wget -O $@ https://github.com/kien/ctrlp.vim/archive/extensions.zip
-
+	wget -O $@ https://github.com/kien/ctrlp.vim/archive/master.zip
 
 
 # Can't match JavaScript inside html <script> tag
