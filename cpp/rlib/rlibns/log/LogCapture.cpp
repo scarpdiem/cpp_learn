@@ -1,10 +1,10 @@
-#include "rlib/log/LogCapture.h"
+#include "rlibns/log/LogCapture.h"
 
-#include "rlib/log/LogDispatcher.h"
-using rlib::log::LogDispatcher;
+#include "rlibns/log/LogDispatcher.h"
+using rlibns::log::LogDispatcher;
 
 
-namespace rlib{ namespace log{
+namespace rlibns{ namespace log{
 LogCaptureGuard::LogCaptureGuard(
 		  const char*			inFileName
 		, const char*			inFunctionName

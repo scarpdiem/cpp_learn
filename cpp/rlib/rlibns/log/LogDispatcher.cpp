@@ -1,7 +1,7 @@
-#include "rlib/log/LogDispatcher.h"
+#include "rlibns/log/LogDispatcher.h"
 
-#include "rlib/log/LogLine.h"
-using rlib::log::LogLine;
+#include "rlibns/log/LogLine.h"
+using rlibns::log::LogLine;
 
 #include <string>
 using std::string;
@@ -10,9 +10,9 @@ using std::string;
 using std::cout;
 using std::endl;
 
-namespace rlib{ namespace log{
+namespace rlibns{ namespace log{
 
-void LogDispatcher::OnLogLine(const rlib::log::LogLine& logLine){
+void LogDispatcher::OnLogLine(const rlibns::log::LogLine& logLine){
 	if(GetAppenderCount() == 0){
 		cout<< "[ "
 				<<logLine.GetPrettyFunction()
@@ -38,4 +38,4 @@ LogDispatcher::~LogDispatcher(){
 
 }
 
-}} // namespace rlib::log
+}} // namespace rlibns::log

@@ -1,15 +1,15 @@
-#ifndef ROXMA_LOG_LOGCAPTURE_H
-#define ROXMA_LOG_LOGCAPTURE_H
+#ifndef RLIBNS_LOG_LOGCAPTURE_H
+#define RLIBNS_LOG_LOGCAPTURE_H
 
 #include <stdint.h>
 #include <string>
 
-#include "rlib/log/LogDispatcher.h"
-namespace rlib{ namespace log{
+#include "rlibns/log/LogDispatcher.h"
+namespace rlibns{ namespace log{
 	class LogDispatcher;
-}} // namespace rlib::log
+}} // namespace rlibns::log
 
-namespace rlib{ namespace log{
+namespace rlibns{ namespace log{
 
 /**
  * @struct Log capture information. Name - value pair.
@@ -52,7 +52,7 @@ struct LogCaptureGuard: protected LogCaptureInfo{
 	~LogCaptureGuard();
 };
 
-}}	// namespace rlib::log
+}}	// namespace rlibns::log
 
 
 #endif

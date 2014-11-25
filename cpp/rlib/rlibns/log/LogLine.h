@@ -1,23 +1,23 @@
-#ifndef ROXMA_LOG_LOGLINE_H
-#define ROXMA_LOG_LOGLINE_H
+#ifndef RLIBNS_LOG_LOGLINE_H
+#define RLIBNS_LOG_LOGLINE_H
 
 #include <sstream>
 #include <string>
 #include <stdint.h>
 
-#include "rlib/log/LogDispatcher.h"
-namespace rlib{ namespace log{
+#include "rlibns/log/LogDispatcher.h"
+namespace rlibns{ namespace log{
 	class LogDispatcher;
 }}
 
 
-namespace rlib{ namespace log{
+namespace rlibns{ namespace log{
 
 
 class LogLine {
 
 private:
-	rlib::log::LogDispatcher& 	logDispatcher;
+	rlibns::log::LogDispatcher& 	logDispatcher;
 	const char * const				fileName;
 	const char * const				functionName;
 	const std::size_t				lineNumber;
@@ -99,6 +99,6 @@ public:
 	virtual ~LogLine();
 };
 
-}} // namespace rlib::log
+}} // namespace rlibns::log
 
 #endif // end of header file

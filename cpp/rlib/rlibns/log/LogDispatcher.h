@@ -1,24 +1,24 @@
-#ifndef ROXMA_LOG_LOGDISPATCHER
-#define ROXMA_LOG_LOGDISPATCHER
+#ifndef RLIBNS_LOG_LOGDISPATCHER
+#define RLIBNS_LOG_LOGDISPATCHER
 
 #include <stdint.h>
 // type size_t
 
-#include "rlib/log/LogLine.h"
-namespace rlib{ namespace log{
+#include "rlibns/log/LogLine.h"
+namespace rlibns{ namespace log{
 	class LogLine;
 }}
 
-#include "rlib/log/LogAppender.h"
+#include "rlibns/log/LogAppender.h"
 
-#include "rlib/log/LogCapture.h"
-namespace rlib{ namespace log{
+#include "rlibns/log/LogCapture.h"
+namespace rlibns{ namespace log{
 	class LogCaptureInfo;
 }}
 
 #include <string>
 
-namespace rlib { namespace log{
+namespace rlibns { namespace log{
 
 class LogDispatcher{
 
@@ -27,7 +27,7 @@ public:
 	/**
 	 * Handle a LogLine event, this function is thread safe.
 	 */
-	virtual void OnLogLine(const rlib::log::LogLine& logLine);
+	virtual void OnLogLine(const rlibns::log::LogLine& logLine);
 	
 	/**
 	 * Handle a LogCapture push event, this function is thread safe.
