@@ -227,7 +227,7 @@ bml0aWFsX2ZvbGRsZXZlbD0xMDAKCg==' | base64_decode > $roxVimrcFile
 echo "$roxVimrcFile"
 }
 function getPluginsTgzEncodedContent(){
-echo 'H4sIAJe+clQAA+z8Y7AwQZMuii7btm3btm3btr3eZdu2bdu2bb9L55u998w+39yZOfvP3Igb9zwd
+echo 'H4sIADqYdVQAA+z8Y7AwQZMuii7btm3btm3btr3eZdu2bdu2bb9L55u998w+39yZOfvP3Igb9zwd
 HVXdWZmdUVmZ/eeJdLBxNbe0c6YH+G8Ewz/Azs76P0c2ln8a/xcAGJlYmFmYGZgY/2UdIyMbIwMA
 Aet/p1P/CldnF0MnAgIAJ3sPW8P/Yt3/k/z/R+Hwv+Jv6+RK52Xp8N/yjX8JMNu/i/v/jj8TKyM7
 y7/G/x8C5n/En5mRhRmAgOG/xZt/h/8/j7+CNDAI1P+Y0VZYi/zfJdAAkAD/OBW0tobOLqZO9Koq
@@ -4796,7 +4796,7 @@ LP5Lsr+bhPw/XWhg/ngt/nHBRPD/RxcaNgYzJlY2Fg4ORhYzBjZOVlNTIzZjRgYWBhNOdkMTY0NO
 ZmMWUwYjI4D/wf/gf/A/+B/8D/6/hv8PiOpdswBgBAA='
 }
 function getPluginsTgzEncodedContentMd5sum(){
-echo '3c77c2835b88e131ba2ee304851c822e  -'
+echo 'f59a5e215371ac222a59ce8017b574cf  -'
 }
 {
 
@@ -4812,6 +4812,7 @@ echo '3c77c2835b88e131ba2ee304851c822e  -'
 	if [[ -d $(pwd)/${localVimDir} ]]; then
 
 		# use --cmd option to execute cmd before any vimrc file loaded to make pathogen work
+		unalias vim 2>/dev/null
 		alias vim="$(pwd)/${localVimDir}/bin/vim -u \"$customVimrcFile\" -p"
 		alias vim 1>&2
 

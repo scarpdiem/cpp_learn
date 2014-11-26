@@ -12,6 +12,7 @@
 	if [[ -d $(pwd)/${localVimDir} ]]; then
 
 		# use --cmd option to execute cmd before any vimrc file loaded to make pathogen work
+		unalias vim 2>/dev/null
 		alias vim="$(pwd)/${localVimDir}/bin/vim -u \"$customVimrcFile\" -p"
 		alias vim 1>&2
 
