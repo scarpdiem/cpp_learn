@@ -96,7 +96,9 @@ set noexpandtab
 set encoding=utf-8 fileencodings=ucs-bom,utf-8,gbk,gb18030,latin1 termencoding=utf-8
 
 " searching
-nnoremap /  :/
+"   use ':' so that we could found the previous search string in history command
+"   '\c' case insensitive
+nnoremap /  :/\c
 " :help last-pattern
 noremap <ESC><ESC> :let @/ = ""<CR>
 
