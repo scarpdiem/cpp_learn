@@ -1,17 +1,23 @@
 
 # make -f recursive_eval.mk
 
-COUNT:=
-
-define func
-COUNT := $$(COUNT)a
-$$(eval $$(if $$(findstring aaaaa,$$(COUNT)),,$$(call func)))
+define funca
+COUNT_A := $$(COUNT_A)a
+$$(eval $$(if $$(findstring aaaaaa,$$(COUNT_A)),,$$(call funca)))
 endef
 
-$(eval $(call func))
+$(eval $(call funca))
+
+define funcb
+COUNT_B := $(COUNT_B)b
+$(eval $(if $(findstring bbbbbb,$(COUNT_B)),,$(value funcb)))
+endef
+
+$(eval $(value funcb))
 
 all:
-	@echo $(COUNT)
-	@echo all
+	@echo $(COUNT_A)
+	@echo $(COUNT_B)
+	@echo all done
 
 
