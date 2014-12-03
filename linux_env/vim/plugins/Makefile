@@ -47,6 +47,10 @@ all: ctrlp.zip
 ctrlp.zip:
 	wget -O $@ https://github.com/kien/ctrlp.vim/archive/master.zip
 
+# Rainbow Parentheses Improved
+all: rainbow.zip
+rainbow.zip:
+	wget -O $@ https://github.com/luochen1990/rainbow/archive/master.zip
 
 # Can't match JavaScript inside html <script> tag
 matchit.zip:
