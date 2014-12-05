@@ -62,3 +62,12 @@ Compile cmake from source with:
 - `:sh`			Open a bash shell.
 - `:read !cmd`	Execute a shell command, read the output into vim.
 
+
+## Makefile
+
+- `:set makegrp=make\ all` and then `:make`. `:make` will compile if you are using a Makefile. Use these to examine the compile errors:
+-  `:copen` open a mini-window with list of errors 
+-  hit enter on an error to jump to line 
+- `:cclose` closes the mini-window
+- `:cw` toggles the mini-window (if errors exist)
+
