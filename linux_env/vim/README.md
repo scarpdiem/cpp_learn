@@ -28,9 +28,10 @@ Compile cmake from source with:
 
 - `Ctrl-B`	Move to beginning of command line.
 - `Ctrl-E`	Move to end of command line.
-- `Ctrl-W`	Delete the word before the cursor.  
+- `Ctrl-W`	Delete the word before the cursor.
 - `Ctrl-U`	Delete all words before the cursor.
 - `Ctrl-F`	Open command line window.
+- `v` `e` `y` to select a word, and then `:<C-r>0` to paste the word to command line. where `0` is the register.
 
 
 ### Search and Replace
