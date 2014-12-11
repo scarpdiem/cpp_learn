@@ -47,6 +47,15 @@ all: ctrlp.zip
 ctrlp.zip:
 	wget -O $@ https://github.com/kien/ctrlp.vim/archive/master.zip
 
+# all: powerline.zip
+powerline.zip:
+	wget -O $@ https://github.com/powerline/powerline/archive/master.zip
+
+all: airline.zip
+airline.zip:
+	wget -O $@ https://github.com/bling/vim-airline/archive/master.zip
+	
+
 # # Rainbow Parentheses Improved
 # all: rainbow.zip
 # rainbow.zip:

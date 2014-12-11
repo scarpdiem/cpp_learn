@@ -76,10 +76,10 @@ nnoremap tp  :tabN<CR>
 nnoremap <S-l> :tabn<CR>
 nnoremap <S-h> :tabN<CR>
 
-" file tab highlighting
-hi TabLineSel      term=bold cterm=bold
-hi TabLine         term=underline cterm=underline ctermfg=0 ctermbg=7
-hi TabLineFill     term=reverse cterm=reverse
+" file tab highlighting, deprecated, use airline plugin with 'set t_Co=256' now
+" hi TabLineSel      term=bold cterm=bold
+" hi TabLine         term=underline cterm=underline ctermfg=0 ctermbg=7
+" hi TabLineFill     term=reverse cterm=reverse
 
 " folding
 set foldenable
@@ -101,4 +101,8 @@ set encoding=utf-8 fileencodings=ucs-bom,utf-8,gbk,gb18030,latin1 termencoding=u
 nnoremap /  :/\c
 " :help last-pattern
 noremap <ESC><ESC> :let @/ = ""<CR>
+
+" Hide the ^M character when openning a file with '\r\n' as line separator
+autocmd FileType cpp,c,h,hpp,txt,xml,html,js,css,php,py syntax match DOS_CR /\r$/ conceal cchar= 
+setl conceallevel=2 concealcursor=nv
 
