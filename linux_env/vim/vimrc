@@ -103,6 +103,6 @@ nnoremap /  :/\c
 noremap <ESC><ESC> :let @/ = ""<CR>
 
 " Hide the ^M character when openning a file with '\r\n' as line separator
-autocmd FileType cpp,c,h,hpp,txt,xml,html,js,css,php,py syntax match DOS_CR /\r$/ conceal cchar= 
-setl conceallevel=2 concealcursor=nv
+" autocmd FileType cpp,c,h,hpp,txt,xml,html,js,css,php,py syntax match DOS_CR /\r$/ conceal cchar= 
+" setl conceallevel=2 concealcursor=nv
 
