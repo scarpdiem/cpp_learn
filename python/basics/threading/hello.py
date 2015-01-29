@@ -16,12 +16,13 @@ def Entry():
 
 	for i in range(count):
 		t = threading.Thread(target=TestThread, args=(q,"hello %d" % i))
-		t.deamon = True
+		# t.deamon = True
 		t.start()
 
 	for i in range(count):
 		s = q.get()
 		print "%d:%s" % (i,s)
+	s = q.get()
 
 
 Entry()
