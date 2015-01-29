@@ -59,3 +59,13 @@ subversion:
 # subversion:
 
 # lib
+get_source: sshpass_1.05.tar.gz
+sshpass_1.05.tar.gz:
+	wget -O $@ http://downloads.sourceforge.net/project/sshpass/sshpass/1.05/sshpass-1.05.tar.gz?r=&ts=1419512643&use_mirror=nchc
+# install: sshpass
+sshpass: PREFIX=$(shell readlink -f .)/sshpass/
+sshpass:
+	mkdir sshpass
+	tar -zxf sshpass_1.05.tar.gz
+	cd 'sshpass-1.05' && ./configure --prefix="$(PREFIX)"  && make && make install
+
