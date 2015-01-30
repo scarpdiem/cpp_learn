@@ -54,7 +54,15 @@ powerline.zip:
 all: airline.zip
 airline.zip:
 	wget -O $@ https://github.com/bling/vim-airline/archive/master.zip
-	
+
+all: accelerated-smooth-scroll.zip
+accelerated-smooth-scroll.zip:
+	wget -O $@ https://codeload.github.com/yonchu/accelerated-smooth-scroll/zip/master
+
+# use accelerated-smooth-scroll.zip instead
+# all: vim-smooth-scroll.zip
+# vim-smooth-scroll.zip:
+# 	wget -O $@ https://codeload.github.com/terryma/vim-smooth-scroll/zip/master
 
 # # Rainbow Parentheses Improved
 # all: rainbow.zip
