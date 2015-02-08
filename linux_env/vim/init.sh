@@ -19,7 +19,7 @@
 
 		# prepend some script to the vimrc file.
 		echo "
-			let g:local_software_dir='$(pwd)'
+			let s:customvimrc_local_software_dir='$(pwd)/.local_software/'
 
 			\" add pathogen initialization to the beginning of vimrc file
 			set rtp+=$(pwd)/${localVimDir}/
