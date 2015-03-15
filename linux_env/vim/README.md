@@ -56,6 +56,7 @@ Compile cmake from source with:
 ### Paste
 
 - `:set paste` and `:set nopaste`, used to paste some snippet of code, that already has indentatio.
+- `ctrl-r 0` to paste register 0 content in insert mode. `:register` to see the registers' values.
 
 
 ### External Commands
