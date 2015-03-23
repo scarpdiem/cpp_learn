@@ -2,8 +2,8 @@
 " Optimize the vim's '{' and '}' key for lines consist of blank characters
 "
 
-nnoremap { :call BlockMoveUp()<CR>
-nnoremap } :call BlockMoveDown()<CR>
+nnoremap { :call BlockMoveUp()<CR>$
+nnoremap } :call BlockMoveDown()<CR>$
 
 
 function! BlockMoveUp()
