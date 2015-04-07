@@ -27,6 +27,10 @@ local_vim:
 # sudo yum install hg
 
 
+##
+# subversion
+#
+# install: subversion
 get_source: subversion-1.8.10.tar.gz sqlite-amalgamation-3071501.zip apr-1.5.1.tar.gz apr-util-1.5.4.tar.gz openssl-1.0.1j.tar.gz
 subversion-1.8.10.tar.gz:
 	wget -O $@ http://mirror.bit.edu.cn/apache/subversion/subversion-1.8.10.tar.gz
@@ -39,7 +43,6 @@ apr-util-1.5.4.tar.gz:
 openssl-1.0.1j.tar.gz:
 	wget https://www.openssl.org/source/openssl-1.0.1j.tar.gz
 # serf-1.3.8.tar.bz2:
-# install: subversion
 subversion: PREFIX=$(shell readlink -f .)/subversion/
 subversion:
 	mkdir subversion
@@ -56,9 +59,8 @@ subversion:
 	cd subversion-1.8.10 && ./configure --with-apr=$(PREFIX) --with-apr-util=$(PREFIX) --with-serf=$(PREFIX) --prefix=$(PREFIX) && make && make install
 	rm -rf apr-1.5.1 apr-util-1.5.4  subversion-1.8.10 serf-1.2.1 openssl-1.0.1j
 
-# subversion:
 
-# lib
+# sshpass
 get_source: sshpass_1.05.tar.gz
 sshpass_1.05.tar.gz:
 	wget -O $@ http://downloads.sourceforge.net/project/sshpass/sshpass/1.05/sshpass-1.05.tar.gz?r=&ts=1419512643&use_mirror=nchc
