@@ -68,6 +68,13 @@ all: vim-easytags.zip
 vim-easytags.zip:
 	wget -O $@ https://codeload.github.com/xolox/vim-easytags/zip/master
 
+
+# # https://github.com/tpope/vim-dispatch#readme
+# all: vim-dispatch.zip
+# vim-dispatch.zip:
+# 	wget -O $@ https://github.com/tpope/vim-dispatch/archive/master.zip
+
+
 # use accelerated-smooth-scroll.zip instead
 # all: vim-smooth-scroll.zip
 # vim-smooth-scroll.zip:
