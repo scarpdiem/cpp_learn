@@ -2,8 +2,8 @@
 " Optimize the vim's '{' and '}' key for lines consist of blank characters
 "
 
-nnoremap { :call BlockMoveUp()<CR>$
-nnoremap } :call BlockMoveDown()<CR>$
+nnoremap { :call BlockMoveUp()<CR>$zz
+nnoremap } :call BlockMoveDown()<CR>$zz
 
 
 function! BlockMoveUp()
@@ -20,7 +20,7 @@ function! BlockMoveUp()
 
 		if (l:whiteSpaceLine==1)
 			if l:skipThis==0
-				call cursor(l:l, 1)
+				execute "normal! " . (l:l) . "G<CR>"
 				return
 			endif
 		else
@@ -29,7 +29,7 @@ function! BlockMoveUp()
       
 		let l:l = l:l-1
 	endwhile
-	call cursor(l:l, 1)
+	execute "normal! " . (l:l) . "G<CR>"
 endfunction
 
 function! BlockMoveDown()
@@ -40,7 +40,7 @@ function! BlockMoveDown()
 		let l:whiteSpaceLine = 0
 		let l:lineArr = getbufline("%",l)
 		if ( len(l:lineArr)==0)
-			call cursor(l:l-1, 1)
+			execute "normal! " . (l:l-1) . "G<CR>"
 			return
 		endif
 
@@ -51,7 +51,7 @@ function! BlockMoveDown()
 
 		if (l:whiteSpaceLine==1)
 			if l:skipThis==0
-				call cursor(l:l, 1)
+				execute "normal! " . l:l . "G<CR>"
 				return
 			endif
 		else
