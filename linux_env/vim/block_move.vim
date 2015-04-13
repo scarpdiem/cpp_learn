@@ -20,7 +20,7 @@ function! BlockMoveUp()
 
 		if (l:whiteSpaceLine==1)
 			if l:skipThis==0
-				execute "normal! " . (l:l) . "G<CR>"
+				execute "normal! " . (l:l) . "G"
 				return
 			endif
 		else
@@ -29,7 +29,7 @@ function! BlockMoveUp()
       
 		let l:l = l:l-1
 	endwhile
-	execute "normal! " . (l:l) . "G<CR>"
+	execute "normal! " . (l:l) . "G"
 endfunction
 
 function! BlockMoveDown()
@@ -40,7 +40,7 @@ function! BlockMoveDown()
 		let l:whiteSpaceLine = 0
 		let l:lineArr = getbufline("%",l)
 		if ( len(l:lineArr)==0)
-			execute "normal! " . (l:l-1) . "G<CR>"
+			execute "normal! " . (l:l-1) . "G"
 			return
 		endif
 
@@ -51,7 +51,7 @@ function! BlockMoveDown()
 
 		if (l:whiteSpaceLine==1)
 			if l:skipThis==0
-				execute "normal! " . l:l . "G<CR>"
+				execute "normal! " . l:l . "G"
 				return
 			endif
 		else
