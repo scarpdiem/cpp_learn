@@ -31,7 +31,7 @@ local_vim:
 # subversion
 #
 # install: subversion
-get_source: subversion-1.8.10.tar.gz sqlite-amalgamation-3071501.zip apr-1.5.1.tar.gz apr-util-1.5.4.tar.gz openssl-1.0.1j.tar.gz
+# get_source: subversion-1.8.10.tar.gz sqlite-amalgamation-3071501.zip apr-1.5.1.tar.gz apr-util-1.5.4.tar.gz openssl-1.0.1j.tar.gz
 subversion-1.8.10.tar.gz:
 	wget -O $@ http://mirror.bit.edu.cn/apache/subversion/subversion-1.8.10.tar.gz
 sqlite-amalgamation-3071501.zip:
@@ -72,3 +72,14 @@ sshpass:
 	cd 'sshpass-1.05' && ./configure --prefix="$(PREFIX)"  && make && make install
 	rm -rf sshpass-1.05
 
+# sshpass
+get_source: global-6.4.tar.gz
+global-6.4.tar.gz:
+	wget -O $@ http://tamacom.com/global/global-6.4.tar.gz
+install: global
+global: PREFIX=$(shell readlink -f .)/global/
+global:
+	mkdir global
+	tar -zxf global-6.4.tar.gz
+	cd 'global-6.4' && ./configure --prefix="$(PREFIX)"  && make && make install
+	rm -rf global-6.4

@@ -103,3 +103,10 @@ noremap <ESC><ESC> :let @/ = ""<CR>
 " autocmd FileType cpp,c,h,hpp,txt,xml,html,js,css,php,py syntax match DOS_CR /\r$/ conceal cchar= 
 " setl conceallevel=2 concealcursor=nv
 
+"""
+" gnu global
+"
+if filereadable(s:customvimrc_local_software_dir . 'global/bin/global')			" if local gnu global is installed
+	let $GTAGSGLOBAL = s:customvimrc_local_software_dir . 'global/bin/global'
+endif
+
