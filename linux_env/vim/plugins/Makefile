@@ -60,14 +60,6 @@ accelerated-smooth-scroll.zip:
 	wget -O $@ https://codeload.github.com/yonchu/accelerated-smooth-scroll/zip/master
 
 
-vim-easytags.zip: vim-misc.zip 
-vim-misc.zip:
-	wget -O $@ https://github.com/xolox/vim-misc/archive/master.zip
-
-all: vim-easytags.zip
-vim-easytags.zip:
-	wget -O $@ https://codeload.github.com/xolox/vim-easytags/zip/master
-
 
 # # https://github.com/tpope/vim-dispatch#readme
 # all: vim-dispatch.zip
