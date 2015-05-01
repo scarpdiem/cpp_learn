@@ -112,6 +112,13 @@ endif
 
 """
 " display
+"
+
 " don't split a long line for display
 set nowrap
+
+" line number
+set relativenumber
+set number
+
 
