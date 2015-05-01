@@ -97,7 +97,7 @@ set encoding=utf-8 fileencodings=ucs-bom,utf-8,gbk,gb18030,latin1 termencoding=u
 "   '\c' case insensitive
 nnoremap /  :/\c
 " :help last-pattern
-noremap <ESC><ESC> :let @/ = ""<CR>
+nnoremap <ESC><ESC> :let @/ = ""<CR>
 
 " Hide the ^M character when openning a file with '\r\n' as line separator
 " autocmd FileType cpp,c,h,hpp,txt,xml,html,js,css,php,py syntax match DOS_CR /\r$/ conceal cchar= 
@@ -109,4 +109,9 @@ noremap <ESC><ESC> :let @/ = ""<CR>
 if filereadable(s:customvimrc_local_software_dir . 'global/bin/global')			" if local gnu global is installed
 	let $GTAGSGLOBAL = s:customvimrc_local_software_dir . 'global/bin/global'
 endif
+
+"""
+" display
+" don't split a long line for display
+set nowrap
 

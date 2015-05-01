@@ -59,6 +59,9 @@ all: accelerated-smooth-scroll.zip
 accelerated-smooth-scroll.zip:
 	wget -O $@ https://codeload.github.com/yonchu/accelerated-smooth-scroll/zip/master
 
+all: vim-easymotion.zip
+vim-easymotion.zip:
+	wget -O $@ https://github.com/Lokaltog/vim-easymotion/archive/master.zip
 
 
 # # https://github.com/tpope/vim-dispatch#readme
