@@ -63,6 +63,10 @@ all: vim-easymotion.zip
 vim-easymotion.zip:
 	wget -O $@ https://github.com/Lokaltog/vim-easymotion/archive/master.zip
 
+all: emmet-vim.zip
+emmet-vim.zip:
+	wget -O $@ https://github.com/mattn/emmet-vim/archive/master.zip
+
 
 # # https://github.com/tpope/vim-dispatch#readme
 # all: vim-dispatch.zip
