@@ -230,11 +230,12 @@ int main(int argc,char**argv){
 	// If there's a warning after a query statement, the program threats it as
 	// error and terminated. This option is enabled by default.
 	intArgs["--warning_as_error"] = 1; 
-	// intArgs["begin_row_index"] = 1;
-	// intArgs["transaction"] = 1;
-	// intArgs["ignore_error"] = 0;
 	
-	// args["null_cell_value"] = "NULL";
+	// after transaction start
+	args["--begin"] = "";
+
+	// befor transaction end
+	args["--end"] = "";
 	
 	args["--input"] = "";
 
@@ -406,6 +407,12 @@ int main(int argc,char**argv){
 		return __LINE__;
 	}
 
+	if ( (args["--begin"].empty()==false) && mysql_query(&mysql,args["--begin"].c_str())!=0){
+		std::cerr<<"execute --begin=["<<args["--begin"]<<"] error."<<mysql_error(&mysql)<<std::endl;
+		return __LINE__;
+	}
+
+
 	MYSQL_STMT *stmt = mysql_stmt_init(&mysql);
 	if(stmt==NULL){
 		std::cerr<<"ERROR: could not initialize statement handler, "<<mysql_error(&mysql)<<std::endl;
@@ -473,7 +480,11 @@ int main(int argc,char**argv){
 		return __LINE__;
 	}
 	std::clog<<rowsExecuted<<" rows executed."<<std::endl;
-	
+
+	if ( (args["--end"].empty()==false) && mysql_query(&mysql,args["--end"].c_str())!=0){
+		std::cerr<<"execute --end=["<<args["--end"]<<"] error."<<mysql_error(&mysql)<<std::endl;
+		return __LINE__;
+	}
 
 	if (mysql_query (&mysql,"commit")!=0){
 		std::cerr<<"ERROR: commit trasaction error. "<<mysql_error(&mysql)<<std::endl;
