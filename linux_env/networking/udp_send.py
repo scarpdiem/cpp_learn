@@ -54,7 +54,7 @@ options:
 
 	if not dataOptionSet:
 		content = sys.stdin.read()
-	
+
 	sys.stderr.write('options: %s\n' % opts)
 
 	if host=='':
@@ -63,6 +63,9 @@ options:
 		raise Exception('port should be specified')
 
 	address = (host,port)
+
+	import time
+	beginMilliseconds = int(round(time.time() * 1000))
 
 	import socket
 	udp = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -78,6 +81,10 @@ options:
 		sys.stderr.write( pprint.pformat(response) + '\n')
 
 	udp.close()
+
+	import time
+	endMilliseconds = int(round(time.time() * 1000))
+	sys.stderr.write('\n%s ms.\n' % (endMilliseconds-beginMilliseconds))
 	 
 	exit(0)
 

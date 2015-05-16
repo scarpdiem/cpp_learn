@@ -57,12 +57,16 @@ options:
 	
 	sys.stderr.write('options: %s\n' % opts)
 
+	# check host port
 	if host=='':
 		raise Exception('host should be specified')
 	if port == 0:
 		raise Exception('port should be specified')
 
 	address = (host,port)
+
+	import time
+	beginMilliseconds = int(round(time.time() * 1000))
 
 	import socket
 	tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -89,7 +93,11 @@ options:
 		sys.stderr.write( pprint.pformat(receiveData) + '\n')
 
 	tcp.close()
-	 
+
+	import time
+	endMilliseconds = int(round(time.time() * 1000))
+	sys.stderr.write('\n%s ms.\n' % (endMilliseconds-beginMilliseconds))
+
 	exit(0)
 
 Entry()

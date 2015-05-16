@@ -48,7 +48,7 @@ function ModuleDefaultOutput(){
 		local scriptName=$(basename $pythonScript)
 		echo \
 "function ${scriptName/%.py/}(){
-python  -c \"\`$(TextFileEncodedToScript $pythonScript)\`\"  \$@
+python  -c \"\`$(TextFileEncodedToScript $pythonScript)\`\"  \"\$@\"
 }"
 	done
 }
